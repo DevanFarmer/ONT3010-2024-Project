@@ -1,0 +1,32 @@
+﻿@using FaultSubsystem.Models.Account;
+@model CreateAccountViewModel;
+
+<h2>Create Account</h2>
+
+<form asp-action="CreateAccount" method="post">
+    <div>
+        <label>First Name: </label>
+        <input type="text" asp-for="FirstName" required />
+    </div>
+    <div>
+        <label>Last Name: </label>
+        <input type="text" asp-for="LastName" required />
+    </div>
+    <div>
+        <label>PhoneNumber: </label>
+        <input type="text" asp-for="PhoneNumber" />
+    </div>
+    <div>
+        <label>Email: </label>
+        <input type="email" asp-for="Email" required />
+    </div>
+    <div>
+        <label>Password: </label>
+        <input type="password" asp-for="Password" required />
+    </div>
+    <div>
+        <label>Confirm Password: </label>
+        <input type="password" asp-for="ConfirmPassword" required />
+    </div>
+    <button type="submit">Create Account</button>
+</form>

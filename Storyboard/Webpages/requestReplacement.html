@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="logo-section">
+            <img src="ChillTech Logo.jpg" alt="Logo" class="logo">
+            <a href="faultDashboard.html" class="home-link">Home</a>
+        </div>
+        <div class="user-info">
+            <i class="fas fa-bell bell-icon"></i>
+            <span class="user-name">Doe, John (User)</span>
+            <div class="user-icon">DJ</div>
+        </div>
+    </header>
+    <div class="dashboard">
+        <header>
+            <h1>Fridge Replacement</h1>
+        </header>
+        <nav class="navbar">
+            <ul>
+                <li><a href="faultDashboard.html">Dashboard</a></li>
+                <li><a href="reportFault.html">Report Fault</a></li>
+                <li><a href="faultStatus.html">Check Fault Status</a></li>
+                <li><a href="requestReplacement.html">Request Replacement</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section id="How to replacement">
+                <h2>How to get a fridge replacement?</h2>
+                <p>You are only eligable for a replacement if you have a fridge currently in maintenance. If eligable you can submit a request and we will send you a 
+                    replacement fridge for you to use until your fridge is repaired and returned.
+                </p>
+                <p>You have <b id="fridgeCount">0</b> fridge(s) in maintance. You are eligable for a replacement fridge.</p>
+                <button id="requestButton" type="submit" style="background-color: grey;">Request Replacment Fridge</button>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; ChillTech Solutions 2024</p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="requestReplacement.js"></script>
+</body>
+</html>

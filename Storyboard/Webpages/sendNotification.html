@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Fault</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="logo-section">
+            <img src="ChillTech Logo.jpg" alt="Logo" class="logo">
+            <a href="faultDashboard.html" class="home-link">Home</a>
+        </div>
+        <div class="user-info">
+            <i class="fas fa-bell bell-icon"></i>
+            <span class="user-name">Doe, John (Technician)</span>
+            <div class="user-icon">DJ</div>
+        </div>
+    </header>
+    <div class="dashboard">
+        <header>
+            <h1>Notify User</h1>
+        </header>
+        <nav class="navbar">
+            <ul>
+                <li><a href="ViewFaults.html">View Faults</a></li>
+            </ul>
+        </nav>
+        <main class="main-form">
+            <div class="form-container">
+                <label style="flex: 1; margin-right: 533px; text-align: left; font-weight: bold;">Fridge:</label>
+                <select style="flex: 1; margin-left: 10px; text-align: right; width: 150px;">
+                    <option>Fridge 01</option>
+                </select>
+                <p></p>
+                <label style="flex: 1; margin-right: 657px; text-align: left; font-weight: bold;">Description:</label>
+                <form action="#" method="post">
+                    <textarea id="comments" name="comments" rows="10" cols="50" placeholder="Description..."></textarea>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; ChillTech Solutions 2024</p>
+        </footer>
+    </div>
+
+</body>
+</html>

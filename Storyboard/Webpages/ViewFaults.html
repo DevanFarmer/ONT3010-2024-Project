@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fault Technician Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="logo-section">
+            <img src="ChillTech Logo.jpg" alt="Logo" class="logo">
+            <a href="faultDashboard.html" class="home-link">Home</a>
+        </div>
+        <div class="user-info">
+            <i class="fas fa-bell bell-icon"></i>
+            <span class="user-name">Doe, John (Technician)</span>
+            <div class="user-icon">DJ</div>
+        </div>
+    </header>
+    <div class="dashboard">
+        <header>
+            <h1>Your Faults</h1>
+        </header>
+        <nav class="navbar">
+            <ul>
+                <li><a href="ViewFaults.html">View Faults</a></li>
+            </ul>
+        </nav>
+        <main class="main-container">
+            <div class="status-container">
+                <h2>Fridge No.1</h2>
+                <div class="status-row">
+                    <div class="status-label">Description:</div>
+                    <div class="status-value">Title Description given by user.</div>
+                    <!--have a dropdown that shows the description the user gave in the report.-->
+                </div>
+                <div class="status-row">
+                    <div class="status-label">Date Reported:</div>
+                    <div class="status-value">01/01/2000</div>
+                </div>
+                <div class="status-row">
+                    <div class="status-label">Status:</div>
+                    <div class="status-value" style="color: red; font-weight: bold;">In-review</div>
+                </div>
+                <button type="submit" style="background-color: green;">View Fault</button>
+            </div>
+        </main>
+        <main class="main-container">
+            <div class="status-container">
+                <h2>Fridge No.2</h2>
+                <div class="status-row">
+                    <div class="status-label">Description:</div>
+                    <div class="status-value">Title Description given by user.</div>
+                    <!--have a dropdown that shows the description the user gave in the report.-->
+                </div>
+                <div class="status-row">
+                    <div class="status-label">Date Reported:</div>
+                    <div class="status-value">01/02/2000</div>
+                </div>
+                <div class="status-row">
+                    <div class="status-label">Status:</div>
+                    <div class="status-value" style="color: greenyellow; font-weight: bold;">Awaiting return</div>
+                </div>
+                <button type="submit" style="background-color: green;">View Fault</button>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; ChillTech Solutions 2024</p>
+        </footer>
+    </div>
+
+</body>
+</html>
