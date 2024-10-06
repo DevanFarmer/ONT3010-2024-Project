@@ -1,0 +1,90 @@
+﻿@model IEnumerable<FaultSubsystem.Models.Role>
+
+<!-- Anti-forgery token -->
+@Html.AntiForgeryToken()
+
+<table>
+    <thead>
+        <tr>
+            <th>Role Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr id="role-row-@role.RoleID">
+                <td id="role-name-@role.RoleID">
+                    @role.RoleName
+                </td>
+                <td id="role-actions-@role.RoleID">
+                    <!-- Edit Button -->
+                    <button class="btn btn-primary" onclick="editRole(@role.RoleID, '@role.RoleName')">Edit</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function editRole(roleID, roleName) {
+        // Hide all other Edit Buttons
+        document.querySelectorAll("button").forEach(button => button.style.display = "none");
+
+        // Find the role name cell and replace it with an input field
+        const roleNameCell = document.getElementById(`role-name-${roleID}`);
+        roleNameCell.innerHTML = `<input type='text' id='input-role-${roleID}' value='${roleName}' class='form-control' />`;
+
+        // Replace the action buttons with Save and Cancel buttons
+        const actionCell = document.getElementById(`role-actions-${roleID}`);
+        actionCell.innerHTML = `
+        <button class='btn btn-success' onclick='saveRole(${roleID})'>Save</button>
+        <button class='btn btn-danger' onclick='cancelEdit(${roleID}, "${roleName}")'>Cancel</button>`;
+    }
+
+    function cancelEdit(roleID, roleName) {
+        // Restore the original role name and the edit button
+        const roleNameCell = document.getElementById(`role-name-${roleID}`);
+        roleNameCell.innerHTML = roleName;
+
+        const actionCell = document.getElementById(`role-actions-${roleID}`);
+        actionCell.innerHTML = `
+        <button class='btn btn-primary' onclick='editRole(${roleID}, "${roleName}")'>Edit</button>`;
+
+        // Show all edit buttons again
+        document.querySelectorAll("button").forEach(button => button.style.display = "inline-block");
+    }
+
+    function saveRole(roleID) {
+        const newRoleName = document.getElementById(`input-role-${roleID}`).value;
+
+        // Send the updated role name to the role controller
+        fetch(`/Role/EditInLine/${roleID}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value // CSRF protection
+            },
+            body: JSON.stringify({ RoleID: roleID, RoleName: newRoleName });
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to update role!');
+                }
+            })
+            .then(data => {
+                // Replace the input field with the updated role name
+                document.getElementById(`role-name-${roleID}`).innerHTML = newRoleName;
+
+                // Restore the Edit button
+                document.getElementById(`role-actions-${roleID}`).innerHTML = `
+                    <button class='btn btn-primary' onclick='editRole(${roleID}, "${newRoleName}")'>Edit</button>`;
+
+                // Show all Edit buttons again
+                document.querySelectorAll("button").forEach(button => button.style.display = "inline-block");
+            })
+            .catch(error => console.error('Error: ', error);
+    }
+</script>

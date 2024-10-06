@@ -10,12 +10,17 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "Tile 1", Description = "Description", Action = "Dashboard", Controller = "Admin"},
+                new TileModel {Title = "Roles", Description = "Add and Edit roles.", Action = "ViewRoles", Controller = "Role"},
                 new TileModel {Title = "Tile 2", Description = "Description", Action = "Dashboard", Controller = "Admin"},
                 new TileModel {Title = "Tile 3", Description = "Description", Action = "Dashboard", Controller = "Admin"}
             };
 
             return View(tiles);
+        }
+
+        public IActionResult ViewRoles()
+        {
+            return RedirectToAction("ViewRoles", "Role");
         }
     }
 }

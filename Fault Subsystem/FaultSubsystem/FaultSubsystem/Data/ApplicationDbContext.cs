@@ -16,7 +16,7 @@ namespace FaultSubsystem.Data
         //public DbSet<FaultStatus> FaultStatus { get; set; }
         //public DbSet<Fridge> Fridge { get; set; }
         //public DbSet<FridgeAllocation> FridgeAllocation { get; set; }
-        //public DbSet<Role> Role { get; set; }
+        public DbSet<Role> Role { get; set; }
         //public DbSet<Status> Status { get; set; }
         //public DbSet<Supplier> Supplier { get; set; }
         public DbSet<User> User { get; set; }
@@ -138,15 +138,15 @@ namespace FaultSubsystem.Data
             //    .HasMaxLength(100);
             //});
 
-            //modelBuilder.Entity<Role>(entity =>
-            //{
-            //    entity.ToTable("Role");         // Table Name
-            //    entity.HasKey(r => r.RoleID);   // Primary Key
-            //    // Columns
-            //    entity.Property(r => r.RoleName)
-            //    .HasMaxLength(100)
-            //    .IsRequired();
-            //});
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.ToTable("Role");         // Table Name
+                entity.HasKey(r => r.RoleID);   // Primary Key
+                // Columns
+                entity.Property(r => r.RoleName)
+                .HasMaxLength(100)
+                .IsRequired();
+            });
 
             //modelBuilder.Entity<Status>(entity =>
             //{
