@@ -24,6 +24,11 @@ namespace FaultSubsystem.Controllers
             return View(roles);
         }
 
+        public IActionResult CreateNewRole()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateNewRole(Role model)
@@ -33,7 +38,7 @@ namespace FaultSubsystem.Controllers
                 return RedirectToAction(nameof(ViewRoles));
             }
 
-            // Does description already exist
+            // Does role name already exist
             var existingRole = await _dBContext.Role.FirstOrDefaultAsync(r => r.RoleName == model.RoleName);
 
             if (existingRole != null)
@@ -60,76 +65,38 @@ namespace FaultSubsystem.Controllers
             return RedirectToAction(nameof(ViewRoles));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditRole(int id, [Bind("RoleID,RoleName")] Role model)
+        // GET: Role/EditRole/{id}
+        public async Task<IActionResult> EditRole(int id)
         {
-            if (id != model.RoleID)
-            {
-                return NotFound(); // Returns 404, Show error message then return to ViewRoles
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _dBContext.Update(model);
-                    await _dBContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RoleExists(model.RoleID))
-                    {
-                        return NotFound(); // returns 404
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return RedirectToAction(nameof(ViewRoles));
+            var roles = await _dBContext.Role.ToListAsync();
+            ViewData["EditRoleId"] = id;  // Pass the ID of the role being edited
+            return View("ViewRoles", roles);   // Re-render the ViewRoles view with edit mode active for this role
         }
 
+        // POST: Role/UpdateRole
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditInLine(int id, [FromBody] Role updatedRole)
+        public async Task<IActionResult> UpdateRole(int RoleID, string RoleName)
         {
-            if (id != updatedRole.RoleID)
-            {
-                return BadRequest();
-            }
-
-            var role = await _dBContext.Role.FindAsync(id);
+            var role = await _dBContext.Role.FindAsync(RoleID);
             if (role == null)
             {
                 return NotFound();
             }
 
+            // Update the role name
+            role.RoleName = RoleName;
+
             if (ModelState.IsValid)
             {
-                role.RoleName = updatedRole.RoleName;
-                try
-                {
-                    await _dBContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RoleExists(role.RoleID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return Json(new {success = true, roleName = role.RoleName});
+                await _dBContext.SaveChangesAsync();
+                return RedirectToAction(nameof(ViewRoles));
             }
 
-            return Json(new { success = false, message = "Invalid data!"});
+            // If invalid, return back to ViewRoles with edit mode still enabled
+            var roles = await _dBContext.Role.ToListAsync();
+            ViewData["EditRoleId"] = RoleID; // Keep the edit mode active if validation fails
+            return View("ViewRoles", roles);
         }
 
         private bool RoleExists(int id)
