@@ -1,13 +1,5 @@
 ﻿@using FaultSubsystem.Models.Shared;
-@using System.Security.Claims;
 @model List<TileModel>
-
-@{
-    string firstName = User.FindFirstValue(ClaimTypes.Name).ToString();
-    string lastName = User.FindFirstValue(ClaimTypes.Surname).ToString();
-
-    string initial = $"{firstName.FirstOrDefault()}{lastName.FirstOrDefault()}";
-}
 
 <head>
     <meta charset="UTF-8">
@@ -54,17 +46,6 @@
         }
     </style>
 </head>
-@* <header class="top-bar">
-    <div class="logo-section">
-        <img src="~/lib/ChillTech Logo.jpg" alt="Logo" class="logo">
-        <p>Home</p>
-    </div>
-    <div>
-        <i class="fas fa-bell bell-icon"></i>
-        <span>@lastName, @firstName (Admin)</span>
-        <div>@initial</div>
-    </div>
-</header> *@
 <div class="tile-container">
     @foreach (var tile in Model)
     {

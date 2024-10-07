@@ -1,0 +1,70 @@
+﻿@*
+    Fault Dashboard
+*@
+@using FaultSubsystem.Models.Shared;
+@using System.Security.Claims;
+@model List<TileModel>
+
+@{
+    string firstName = User.FindFirstValue(ClaimTypes.Name).ToString();
+    string lastName = User.FindFirstValue(ClaimTypes.Surname).ToString();
+
+    string initial = $"{firstName.FirstOrDefault()}{lastName.FirstOrDefault()}";
+}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        .tile-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two tiles per row */
+            gap: 5px; /* Space between tiles */
+            justify-items: center; /* Center the tiles horizontally */
+        }
+
+        .tile-link {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit text color */
+        }
+
+        .tile {
+            width: 200px;
+            height: 200px;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .tile-title {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .tile-description {
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-align: left;
+            color: #555;
+        }
+    </style>
+</head>
+<div class="tile-container">
+    @foreach (var tile in Model)
+    {
+        <a asp-action="@tile.Action" asp-controller="@tile.Controller" class="tile-link">
+            <div class="tile">
+                <h2 class="tile-title">@tile.Title</h2>
+                <p class="tile-description" @tile.Description></p>
+            </div>
+        </a>
+    }
+</div>
