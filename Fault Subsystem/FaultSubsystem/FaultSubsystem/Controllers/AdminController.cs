@@ -12,8 +12,8 @@ namespace FaultSubsystem.Controllers
             var tiles = new List<TileModel>
             {
                 new TileModel {Title = "Roles", Description = "Add and Edit roles.", Action = "ViewRoles", Controller = "Role"},
-                new TileModel {Title = "Employees", Description = "Manage Employees", Action = "ViewEmployees", Controller = "Admin"},
-                new TileModel {Title = "Tile 3", Description = "Description", Action = "Dashboard", Controller = "Admin"}
+                new TileModel {Title = "Employees", Description = "Manage Employees", Action = "Dashboard", Controller = "Employee"},
+                new TileModel {Title = "Customers", Description = "Description", Action = "Dashboard", Controller = "Admin"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -24,16 +24,6 @@ namespace FaultSubsystem.Controllers
         public IActionResult ViewRoles()
         {
             return RedirectToAction("ViewRoles", "Role");
-        }
-
-        public IActionResult ViewEmployees()
-        {
-            return View();
-        }
-
-        public IActionResult EmployeeDetails()
-        {
-            return View();
         }
     }
 }

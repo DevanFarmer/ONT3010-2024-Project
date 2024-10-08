@@ -45,7 +45,7 @@ namespace FaultSubsystem.Controllers
             // Hash password
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-            // Increment ID
+            // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
             var maxUsers = await _dBContext.User.MaxAsync(u => (int?)u.UserID) ?? 0;
 
             var newUserID = maxUsers + 1;

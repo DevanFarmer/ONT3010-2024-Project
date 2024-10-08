@@ -1,0 +1,43 @@
+﻿@*
+    Lists all users, that are not customers, without a role?
+    Shows all employees from the employee table
+*@
+@model FaultSubsystem.Models.EmployeeModels.EmployeeViewDetailsModel
+
+<h2>Employee Details</h2>
+
+<div>
+    <label>First Name:</label>
+    <p>@Model.FirstName</p>
+</div>
+<div>
+    <label>Last Name:</label>
+    <p>@Model.LastName</p>
+</div>
+<div>
+    <label>Email:</label>
+    <p>@Model.Email</p>
+</div>
+<div>
+    <label>Phone Number:</label>
+    <p>@Model.PhoneNumber</p>
+</div>
+<div>
+    <label>Role:</label>
+    <p>@Model.RoleName</p>
+</div>
+
+<h4>Assign Role</h4>
+
+<form asp-action="AssignRole" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="EmployeeID" />
+
+    <div class="form-group">
+        <label for="RoleID">Select Role</label>
+        <select asp-for="RoleID" asp-items="ViewBag.RoleList" class="form-control"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Assign Role</button>
+</form>

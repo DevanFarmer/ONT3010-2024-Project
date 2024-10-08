@@ -1,0 +1,29 @@
+﻿@*
+    List the employees with: Name(First+LastName) - Role(Nullable) - Actions(View Employee)
+    View Employee shows full details of the employee, also always the admin to assign the employee a role
+*@
+@model IEnumerable<FaultSubsystem.Models.EmployeeModels.EmployeeViewModel>
+
+<h2>Employee List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FullName</td>
+                <td>@employee.RoleName</td>
+                <td>
+                    <a asp-action="EmployeeDetails" asp-route-id="@employee.EmployeeID" class="btn btn-info">View Employee</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

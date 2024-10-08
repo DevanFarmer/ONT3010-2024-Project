@@ -42,6 +42,9 @@ namespace FaultSubsystem.Data
                 entity.Property(e => e.UserID)
                 .HasMaxLength(100)
                 .IsRequired();
+                entity.Property(e => e.RoleID)
+                .HasMaxLength(100)
+                .IsRequired();
             });
 
             modelBuilder.Entity<FaultReport>(entity =>
@@ -161,7 +164,7 @@ namespace FaultSubsystem.Data
 
             modelBuilder.Entity<Supplier>(entity =>
             {
-                entity.ToTable("Status");         // Table Name
+                entity.ToTable("Supplier");         // Table Name
                 entity.HasKey(s => s.SupplierID);   // Primary Key
                 // Columns
                 entity.Property(s => s.SupplierName)
