@@ -5,8 +5,8 @@
         public int AllocationID { get; set; }
         public int FridgeID { get; set; }
         public int CustomerID { get; set; }
-        public int AllocationDate { get; set; }
-        public int ReturnDate { get; set; }
+        public DateTime AllocationDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
 
         public Fridge Fridge { get; set; }
         public Fridge Customer { get; set; }

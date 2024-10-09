@@ -16,7 +16,7 @@ namespace FaultSubsystem.Data
         public DbSet<FaultStatus> FaultStatus { get; set; }
         public DbSet<Fridge> Fridge { get; set; }
         public DbSet<FridgeAllocation> FridgeAllocation { get; set; }
-        //public DbSet<Location> Location { get; set; }
+        public DbSet<Location> Location { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<Supplier> Supplier { get; set; }
@@ -56,19 +56,16 @@ namespace FaultSubsystem.Data
                 .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.EmployeeID)
-                .HasMaxLength(100)
-                .IsRequired();
+                .HasMaxLength(100);
                 entity.Property(f => f.FaultStatusID)
                 .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.FaultDescription)
-                .HasMaxLength(100)
+                .HasMaxLength(255)
                 .IsRequired();
                 entity.Property(f => f.ReportDate)
-                .HasMaxLength(100)
                 .IsRequired();
-                entity.Property(f => f.ResolutionDate)
-                .HasMaxLength(100);
+                entity.Property(f => f.ResolutionDate);
             });
 
             modelBuilder.Entity<FaultStatus>(entity =>
@@ -102,7 +99,6 @@ namespace FaultSubsystem.Data
                 .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.DateAcquired)
-                .HasMaxLength(100)
                 .IsRequired();
             });
 
@@ -118,29 +114,26 @@ namespace FaultSubsystem.Data
                 .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.AllocationDate)
-                .HasMaxLength(100)
                 .IsRequired();
-                entity.Property(f => f.ReturnDate)
-                .HasMaxLength(100);
+                entity.Property(f => f.ReturnDate);
             });
 
-            //modelBuilder.Entity<Location>(entity =>
-            //{
-            //    entity.ToTable("Location");         // Table Name
-            //    entity.HasKey(l => l.LocationID);   // Primary Key
-            //    // Columns
-            //    entity.Property(l => l.AddressLine1)
-            //    .HasMaxLength(100)
-            //    .IsRequired();
-            //    entity.Property(l => l.AddressLine2)
-            //    .HasMaxLength(100)
-            //    .IsRequired();
-            //    entity.Property(l => l.City)
-            //    .HasMaxLength(100)
-            //    .IsRequired();
-            //    entity.Property(l => l.PostalCode)
-            //    .HasMaxLength(100);
-            //});
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.ToTable("Location");         // Table Name
+                entity.HasKey(l => l.LocationID);   // Primary Key
+                // Columns
+                entity.Property(l => l.AddressLine1)
+                .HasMaxLength(100)
+                .IsRequired();
+                entity.Property(l => l.AddressLine2)
+                .HasMaxLength(100);
+                entity.Property(l => l.City)
+                .HasMaxLength(100)
+                .IsRequired();
+                entity.Property(l => l.PostalCode)
+                .HasMaxLength(100);
+            });
 
             modelBuilder.Entity<Role>(entity =>
             {

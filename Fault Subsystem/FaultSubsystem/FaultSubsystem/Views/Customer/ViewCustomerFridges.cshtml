@@ -1,0 +1,45 @@
+﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.AllocatedFridgesViewModel>
+
+<h2>Your Fridges</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fridge Model</th>
+            <th>Serial Number</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var fridge in Model)
+            {
+                <tr>
+                    <td>@fridge.FridgeModel</td>
+                    <td>@fridge.SerialNumber</td>
+                    <td>
+                        <strong>Address Line 1:</strong> @fridge.Addressline1 <br />
+                        @if (@fridge.Addressline2 != null) 
+                        {
+                            <strong>Address Line 2:</strong> @fridge.Addressline2 <br />
+                        }
+                        <strong>City:</strong> @fridge.City <br />
+                        <strong>Postal Code:</strong> @fridge.PostalCode <br />
+                    </td>
+                    <td>
+                        <a href="@Url.Action("AllocatedFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID})" class="btn btn-info">View Details</a>
+                        <a href="@Url.Action("ReportFault", "Customer", new { allocationID = fridge.AllocationID })" class="btn btn-danger">Report Fault</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">You have no fridges allocated to you. Please contact customer support.</td>
+            </tr>
+        }
+    </tbody>
+</table>

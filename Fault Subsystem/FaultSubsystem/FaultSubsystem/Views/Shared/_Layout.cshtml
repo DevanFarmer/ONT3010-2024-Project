@@ -81,11 +81,11 @@
                     // Retrieve claim values
                     var surname = User.FindFirstValue(ClaimTypes.Surname);
                     var name = User.FindFirstValue(ClaimTypes.Name);
-                    //var role = User.FindFirst("Role")?.Value;
+                    var role = User.FindFirstValue(ClaimTypes.Role);
                     var initial = $"{name?.FirstOrDefault()}{surname?.FirstOrDefault()}";
                 }
                 <i class="fas fa-bell bell-icon"></i>
-                <span class="user-name">@surname, @name (Admin)</span>
+                <span class="user-name">@surname, @name (@role)</span>
                 <div class="user-icon" onclick="toggleDropdown()">@initial</div>
                 <div id="dropdown" class="dropdown-content">
                     <a href="#">Logout</a>

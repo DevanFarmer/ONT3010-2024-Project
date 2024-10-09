@@ -84,30 +84,83 @@ namespace FaultSubsystem.Controllers
                 // Successful Log in
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
-                    // Store a claim for accessing logged in user information in other views and controllers
-                    var claims = new List<Claim>
-                    {
-                        new Claim("UserID", user.UserID.ToString()),
-                        new Claim(ClaimTypes.Name, user.FirstName),
-                        new Claim(ClaimTypes.Surname, user.LastName),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.OtherPhone, user.PhoneNumber)
-                    };
-
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var principal = new ClaimsPrincipal(identity);
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
                     // Check the users role and load the proper dashboard
+                    // Check if user is customer
+                    var existingCustomer = await _dBContext.Customer.AnyAsync(c => c.UserID == user.UserID);
+                    if (existingCustomer)
+                    {
+                        // Set claim
+                        CreateClaim(user, "Customer");
 
-                    return RedirectToAction("Dashboard", "Admin");
+                        return RedirectToAction("Dashboard", "Customer");
+                    }
+                    // ELSE
+                    // Check if user is employee
+                    var existingEmployee = await _dBContext.Employee.AnyAsync(e => e.UserID == user.UserID);
+                    if (existingEmployee)
+                    {
+                        // Check employee role
+                        var employeeRole = await (from employee in _dBContext.Employee
+                                              join role in _dBContext.Role
+                                              on employee.RoleID equals role.RoleID
+                                              where employee.UserID == user.UserID
+                                              select new { RoleID = role.RoleID, RoleName = role.RoleName }).FirstOrDefaultAsync();
+
+                        if (employeeRole.RoleID == 1)
+                        {
+                            // Unassigned Role
+                            // employee is not fully assigned on system
+                            // redirect to appropriate Error View with ability to return to login screen
+                            return NotFound();
+                        }
+
+                        // Set claim
+                        CreateClaim(user, employeeRole.RoleName);
+
+                        // Set proper controller and action redirect variables
+                        string controllerName = $"{employeeRole.RoleName}";
+                        string actionName = "Dashboard";
+
+                        // Check if controller exists
+                        var controllerType = Type.GetType($"{GetType().Namespace}.{controllerName}Controller");
+                        if (controllerType == null)
+                        {
+                            // Redirect to the proper error view
+                            return NotFound();
+                        }
+
+                        // Redirect to the proper dashboard view
+                        return RedirectToAction(actionName, controllerName);
+                    }
+
+                    //ELSE user is not fully registered on system
+                    // redirect to appropriate Error View with ability to return to login screen
+                    return NotFound();
                 }
 
                 ModelState.AddModelError("", "Invalid email or password.");
             }
 
             return View(model);
+        }
+
+        public async void CreateClaim(User user, string role)
+        {
+            // Store a claim for accessing logged in user information in other views and controllers
+            var claims = new List<Claim>
+                    {
+                        new Claim("UserID", user.UserID.ToString()),
+                        new Claim(ClaimTypes.Name, user.FirstName),
+                        new Claim(ClaimTypes.Surname, user.LastName),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.OtherPhone, user.PhoneNumber),
+                        new Claim(ClaimTypes.Role, role)
+                    };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
     }
 }

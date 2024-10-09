@@ -8,11 +8,11 @@ using System.Security.Claims;
 
 namespace FaultSubsystem.Controllers
 {
-    public class FaultController : Controller
+    public class CustomerFaultController : Controller
     {
         private readonly ApplicationDbContext _dBContext;
 
-        public FaultController(ApplicationDbContext context)
+        public CustomerFaultController(ApplicationDbContext context)
         {
             _dBContext = context;
         }
@@ -24,14 +24,19 @@ namespace FaultSubsystem.Controllers
             // Customer Tiles
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "Report Fault", Description = "Report a fault for one of your fridges.", Action = "ReportFault", Controller = "Fault"},
-                new TileModel {Title = "View Fault Status", Description = "View the status of your fridges currently in maintenace.", Action = "Dashboard", Controller = "Fault"},
-                new TileModel {Title = "Request Replacement Fridge", Description = "Request a replacement fridge for your faulty fridges.", Action = "Dashboard", Controller = "Fault"}
+                new TileModel {Title = "Report Fault", Description = "Report a fault for one of your fridges.", Action = "ReportFault", Controller = "CustomerFault"},
+                new TileModel {Title = "View Fault Status", Description = "View the status of your fridges currently in maintenace.", Action = "Dashboard", Controller = "CustomerFault"},
+                new TileModel {Title = "Request Replacement Fridge", Description = "Request a replacement fridge for your faulty fridges.", Action = "Dashboard", Controller = "CustomerFault"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
 
             return RedirectToAction("Dashboard", "Shared");
+        }
+
+        public IActionResult ReportFault()
+        {
+            return View();
         }
 
         // GET: Fault/Create

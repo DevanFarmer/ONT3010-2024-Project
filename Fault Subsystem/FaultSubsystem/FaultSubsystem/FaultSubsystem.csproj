@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Customer\" />
+    <Folder Include="Views\Administrator\" />
+    <Folder Include="Views\CustomerFault\" />
   </ItemGroup>
 
 </Project>
