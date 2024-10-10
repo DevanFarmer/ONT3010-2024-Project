@@ -63,13 +63,13 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FaultSubsystem.styles.css" asp-append-version="true" />
-    @if (ViewContext.RouteData.Values["Action"].ToString() == "Login") // Check if the current action is Login
+    @if (ViewContext.RouteData.Values["Action"].ToString() == "Login" || ViewContext.RouteData.Values["Action"].ToString() == "CreateAccount") // Check if the current action is Login
     {
         <link rel="stylesheet" href="~/css/loginStyles.css" /> <!-- Login-specific stylesheet -->
     }
 </head>
 <body>
-    @if (actionName != "Login")  // This will hide the banner on the login page
+    @if (actionName != "Login" || actionName != "CreateAccount")  // This will hide the banner on the login page
     {
         <header class="top-bar">
             <div class="logo-section">

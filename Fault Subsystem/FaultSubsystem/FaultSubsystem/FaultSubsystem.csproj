@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Administrator\" />
-    <Folder Include="Views\CustomerFault\" />
   </ItemGroup>
 
 </Project>
