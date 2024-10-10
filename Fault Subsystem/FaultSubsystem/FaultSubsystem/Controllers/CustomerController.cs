@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace FaultSubsystem.Controllers
 {
@@ -25,7 +26,8 @@ namespace FaultSubsystem.Controllers
             var tiles = new List<TileModel>
             {
                 new TileModel {Title = "View Fridges", Description = "View your fridges.", Action = "ViewFridges", Controller = "Customer"},
-                new TileModel {Title = "View Temporary Fridges", Description = "View your temporarily allocated fridges.", Action = "Dashboard", Controller = "Customer"}
+                new TileModel {Title = "View Temporary Fridges", Description = "View your temporarily allocated fridges.", Action = "Dashboard", Controller = "Customer"},
+                new TileModel {Title = "View Faulty Fridges", Description = "View the status of your faulty fridges.", Action = "ViewFaultyFridges", Controller = "Customer"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -121,27 +123,25 @@ namespace FaultSubsystem.Controllers
             return View(model); // Error messages
         }
 
-        public async Task<IActionResult> CreateFault()
+        public async Task<IActionResult> ViewFaultyFridges()
         {
-            var customer = await GetLoggedInCustomer();
+            var customer = await _dBContext.Customer.FirstOrDefaultAsync(c => c.UserID == int.Parse(User.FindFirst("UserID").Value));
 
             if (customer == null)
             {
-                // Show proper error
-                return RedirectToAction("Dashboard", "Customer");
+                return NotFound();
             }
 
-            // Fetch the fridges allocated to this customer
-            var allocatedFridges = await _dBContext.FridgeAllocation
-                .Where(a => a.CustomerID == customer.CustomerID)
-                .Select(a => new {
-                    AllocationID = a.AllocationID,
-                    FridgeName = $"{a.Fridge.FridgeModel}, {a.Fridge.SerialNumber}"
-                }).ToListAsync();
+            // Check Report Records for Status, If not 'Fixed' then it is still faulty
+            var faultyFridges = await _dBContext.FridgeAllocation
+                .Include(fa => fa.Fridge)
+                .Include(fa => fa.Fridge.Location)
+                .Include(fa => fa.Customer)
+                .Where(fa => _dBContext.FaultReport
+                    .Any(fr => fr.AllocationID == fa.AllocationID && fr.FaultStatus.StatusName != "Fixed"))
+                .ToListAsync();
 
-            ViewBag.FridgeList = new SelectList(allocatedFridges, "AllocationID", "FridgeName");
-
-            return View();
+            return View(faultyFridges);
         }
 
         public async Task<Customer> GetLoggedInCustomer()

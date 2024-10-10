@@ -9,6 +9,7 @@
         public DateTime? ReturnDate { get; set; }
 
         public Fridge Fridge { get; set; }
-        public Fridge Customer { get; set; }
+        public Customer Customer { get; set; }
+        public ICollection<FaultReport> FaultReport { get; set; } = new List<FaultReport>();
     }
 }

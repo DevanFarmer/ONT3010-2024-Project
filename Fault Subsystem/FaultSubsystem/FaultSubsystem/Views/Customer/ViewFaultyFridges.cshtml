@@ -1,0 +1,46 @@
+﻿@model IEnumerable<FaultSubsystem.Models.FridgeAllocation>
+
+@if (Model.Count() > 0)
+{
+    <h2>Faulty Fridges</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fridge Model</th>
+                <th>Serial Number</th>
+                <th>Location</th>
+                <th>Current Fault Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fridge in Model)
+            {
+                var currentFault = fridge.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed");
+                if (currentFault != null)
+                {
+                    <tr>
+                        <td>@fridge.Fridge.FridgeModel</td>
+                        <td>@fridge.Fridge.SerialNumber</td>
+                        <td>
+                            @fridge.Fridge.Location.AddressLine1 <br />
+                            @fridge.Fridge.Location.AddressLine2 <br />
+                            @fridge.Fridge.Location.City <br />
+                            @fridge.Fridge.Location.PostalCode
+                        </td>
+                        <td>@currentFault.FaultStatus.StatusName</td>
+                        <td>
+                            <a href="@Url.Action("AllocatedFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID })" class="btn btn-info">View Details</a>
+                        </td>
+                        @* Have a button to request a replacement for the fridge *@
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2>You don't have any faulty fridges.</h2>
+}
