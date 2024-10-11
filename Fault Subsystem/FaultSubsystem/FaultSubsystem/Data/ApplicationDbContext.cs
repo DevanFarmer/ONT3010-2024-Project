@@ -189,6 +189,10 @@ namespace FaultSubsystem.Data
             });
 
             // Relationships
+            modelBuilder.Entity<FaultReport>()
+                .HasOne(fr => fr.FridgeAllocation)
+                .WithMany(fa => fa.FaultReport)
+                .HasForeignKey(fr => fr.AllocationID);
             //modelBuilder.Entity<Customer>()
             //    .HasOne(c => c.User)
             //    .WithOne(u => u.Customer)

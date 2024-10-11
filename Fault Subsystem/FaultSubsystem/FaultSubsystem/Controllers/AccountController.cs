@@ -118,7 +118,7 @@ namespace FaultSubsystem.Controllers
                         CreateClaim(user, employeeRole.RoleName);
 
                         // Set proper controller and action redirect variables
-                        string controllerName = $"{employeeRole.RoleName}";
+                        string controllerName = $"{employeeRole.RoleName.Replace(" ", "")}";
                         string actionName = "Dashboard";
 
                         // Check if controller exists

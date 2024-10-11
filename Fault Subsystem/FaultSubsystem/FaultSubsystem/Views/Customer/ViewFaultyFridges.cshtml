@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FaultSubsystem.Models.FridgeAllocation>
+﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.FaultyFridgesViewModel>
 
 @if (Model.Count() > 0)
 {
@@ -9,33 +9,26 @@
             <tr>
                 <th>Fridge Model</th>
                 <th>Serial Number</th>
-                <th>Location</th>
+                <th>Fault Description</th>
                 <th>Current Fault Status</th>
+                <th>Return Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var fridge in Model)
             {
-                var currentFault = fridge.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed");
-                if (currentFault != null)
-                {
-                    <tr>
-                        <td>@fridge.Fridge.FridgeModel</td>
-                        <td>@fridge.Fridge.SerialNumber</td>
-                        <td>
-                            @fridge.Fridge.Location.AddressLine1 <br />
-                            @fridge.Fridge.Location.AddressLine2 <br />
-                            @fridge.Fridge.Location.City <br />
-                            @fridge.Fridge.Location.PostalCode
-                        </td>
-                        <td>@currentFault.FaultStatus.StatusName</td>
-                        <td>
-                            <a href="@Url.Action("AllocatedFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID })" class="btn btn-info">View Details</a>
-                        </td>
-                        @* Have a button to request a replacement for the fridge *@
-                    </tr>
-                }
+                <tr>
+                    <td>@fridge.FridgeModel</td>
+                    <td>@fridge.SerialNumber</td>
+                    <td>@fridge.FaultDescription</td>
+                    <td>@fridge.FaultStatus</td>
+                    <td>@fridge.ReturnDate</td>
+                    <td>
+                        <a href="@Url.Action("ViewFaultyFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID })" class="btn btn-info">View Details</a>
+                        @* Have a button to request a replacement for the fridge here *@
+                    </td>
+                </tr>
             }
         </tbody>
     </table>

@@ -35,6 +35,7 @@ namespace FaultSubsystem.Controllers
             return RedirectToAction("Dashboard", "Shared");
         }
 
+        #region Fridge Information
         public async Task<IActionResult> ViewFridges()
         {
             // get customer id then redirect to view
@@ -78,7 +79,7 @@ namespace FaultSubsystem.Controllers
                                         City = fa.Fridge.Location.City,
                                         PostalCode = fa.Fridge.Location.PostalCode,
                                         AllocationDate = fa.AllocationDate.ToShortDateString(),
-                                        ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "Not Returned"
+                                        ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
                                     })
                                     .FirstOrDefaultAsync();
 
@@ -89,7 +90,9 @@ namespace FaultSubsystem.Controllers
 
             return View(fridgeAllocation);
         }
+        #endregion
 
+        #region Faults
         public IActionResult ReportFault(int allocationID)
         {
             var model = new FaultReportViewModel
@@ -106,8 +109,14 @@ namespace FaultSubsystem.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Increment ID, no deleting reports for records sake
+                var maxReports = await _dBContext.FaultReport.MaxAsync(fr => (int?)fr.FaultID) ?? 0;
+
+                var newFaultID = maxReports + 1;
+
                 var faultReport = new FaultReport
                 {
+                    FaultID = newFaultID,
                     AllocationID = model.AllocationID,
                     FaultDescription = model.FaultDescription,
                     FaultStatusID = 1, // First Status should be 'Reported'
@@ -135,14 +144,53 @@ namespace FaultSubsystem.Controllers
             // Check Report Records for Status, If not 'Fixed' then it is still faulty
             var faultyFridges = await _dBContext.FridgeAllocation
                 .Include(fa => fa.Fridge)
-                .Include(fa => fa.Fridge.Location)
-                .Include(fa => fa.Customer)
-                .Where(fa => _dBContext.FaultReport
-                    .Any(fr => fr.AllocationID == fa.AllocationID && fr.FaultStatus.StatusName != "Fixed"))
+                .Include(fa => fa.FaultReport)
+                    .ThenInclude(fr => fr.FaultStatus)
+                .Where(fa => fa.CustomerID == customer.CustomerID) // Filter by customer
+                .Where(fa => fa.FaultReport.Any(fr => fr.FaultStatus.StatusName != "Fixed")) // Filter by reports that are not fixed
+                .Select(fa => new FaultyFridgesViewModel
+                {
+                    FridgeID = fa.FridgeID,
+                    FridgeModel = fa.Fridge.FridgeModel,
+                    SerialNumber = fa.Fridge.SerialNumber,
+                    FaultDescription = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultDescription,
+                    FaultStatus = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultStatus.StatusName,
+                    ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
+                })
                 .ToListAsync();
 
             return View(faultyFridges);
         }
+
+        public async Task<IActionResult> ViewFaultyFridgeDetails(int fridgeID)
+        {
+            var faultyFridgeDetails = await _dBContext.FridgeAllocation
+                .Include(fa => fa.Fridge)
+                .Include(fa => fa.Fridge.Location)
+                .Include(fa => fa.FaultReport)
+                    .ThenInclude(fr => fr.FaultStatus) // Include fault status
+                .Where(fa => fa.FridgeID == fridgeID) // Filter by FridgeID
+                .Where(fa => fa.FaultReport.Any(fr => fr.FaultStatus.StatusName != "Fixed")) // Only faulty fridges
+                .Select(fa => new FaultyFridgeDetailsViewModel
+                {
+                    FridgeModel = fa.Fridge.FridgeModel,
+                    SerialNumber = fa.Fridge.SerialNumber,
+                    Addressline1 = fa.Fridge.Location.AddressLine1,
+                    Addressline2 = fa.Fridge.Location.AddressLine2,
+                    City = fa.Fridge.Location.City,
+                    PostalCode = fa.Fridge.Location.PostalCode,
+                    AllocationDate = fa.AllocationDate.ToShortDateString(),
+                    ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "Not Returned",
+
+                    // Selecting the first fault report that isn't "Fixed" for the fridge allocation
+                    FaultDescription = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultDescription,
+                    FaultStatus = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultStatus.StatusName
+                })
+                .FirstOrDefaultAsync();
+
+            return View(faultyFridgeDetails);
+        }
+        #endregion
 
         public async Task<Customer> GetLoggedInCustomer()
         {

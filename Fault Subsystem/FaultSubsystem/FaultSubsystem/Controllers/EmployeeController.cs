@@ -7,6 +7,7 @@ using FaultSubsystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Specialized;
+using FaultSubsystem.Models.CustomerModels;
 
 namespace FaultSubsystem.Controllers
 {
@@ -89,7 +90,7 @@ namespace FaultSubsystem.Controllers
             employee.RoleID = roleID;
             await _dBContext.SaveChangesAsync();
 
-            return RedirectToAction(nameof(EmployeeDetails), new { id = employeeID });
+            return RedirectToAction(nameof(ViewEmployees));
         }
 
         public async Task<IActionResult> ViewNonEmployeeUsers(string searchString)

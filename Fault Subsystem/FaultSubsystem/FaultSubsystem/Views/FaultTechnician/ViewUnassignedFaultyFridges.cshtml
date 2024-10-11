@@ -1,0 +1,34 @@
+﻿@model IEnumerable<FaultSubsystem.Models.EmployeeModels.UnassignedFaultReportViewModel>
+
+<h2>Unassigned Fault Reports</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fridge Model</th>
+            <th>Serial Number</th>
+            <th>Fault Description</th>
+            <th>Fault Status</th>
+            <th>Allocation Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var report in Model)
+        {
+            <tr>
+                <td>@report.FridgeModel</td>
+                <td>@report.SerialNumber</td>
+                <td>@report.FaultDescription</td>
+                <td>@report.FaultStatus</td>
+                <td>@report.AllocationDate</td>
+                <td>
+                    <form method="post" action="@Url.Action("AssignFaultReport", "FaultTechnician")">
+                        <input type="hidden" name="faultID" value="@report.FaultID" />
+                        <button type="submit" class="btn btn-primary">Assign to Me</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

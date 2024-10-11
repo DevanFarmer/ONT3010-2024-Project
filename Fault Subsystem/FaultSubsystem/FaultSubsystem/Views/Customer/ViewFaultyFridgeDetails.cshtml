@@ -1,0 +1,27 @@
+﻿@model FaultSubsystem.Models.CustomerModels.FaultyFridgeDetailsViewModel
+
+<h2>Fridge Details</h2>
+
+<div>
+    <h4>Fridge Information</h4>
+    <p><strong>Fridge Model:</strong> @Model.FridgeModel</p>
+    <p><strong>Serial Number:</strong> @Model.SerialNumber</p>
+    <p><strong>Allocation Date:</strong> @Model.AllocationDate</p>
+</div>
+
+<div>
+    <h4>Location Information</h4>
+    <p><strong>Address Line 1:</strong> @Model.Addressline1</p>
+    <p><strong>Address Line 2:</strong> @Model.Addressline2</p>
+    <p><strong>City:</strong> @Model.City</p>
+    <p><strong>Postal Code:</strong> @Model.PostalCode</p>
+</div>
+
+<div>
+    <h4>Fault Information</h4>
+    <p><strong>Fault Description:</strong> @Model.FaultDescription</p>
+    <p><strong>Status:</strong> @Model.FaultStatus</p>
+    <p><strong>Return Date:</strong> @Model.ReturnDate</p>
+</div>
+
+<a href="@Url.Action("ViewFaultyFridges", "Customer")" class="btn btn-secondary">Back to List</a>
