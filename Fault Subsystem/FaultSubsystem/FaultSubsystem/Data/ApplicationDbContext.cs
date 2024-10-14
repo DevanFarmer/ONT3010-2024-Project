@@ -53,12 +53,9 @@ namespace FaultSubsystem.Data
                 entity.HasKey(f => f.FaultID);   // Primary Key
                 // Columns
                 entity.Property(f => f.AllocationID)
-                .HasMaxLength(100)
                 .IsRequired();
-                entity.Property(f => f.EmployeeID)
-                .HasMaxLength(100);
+                entity.Property(f => f.EmployeeID);
                 entity.Property(f => f.FaultStatusID)
-                .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.FaultDescription)
                 .HasMaxLength(255)
@@ -66,6 +63,12 @@ namespace FaultSubsystem.Data
                 entity.Property(f => f.ReportDate)
                 .IsRequired();
                 entity.Property(f => f.ResolutionDate);
+                entity.Property(f => f.AssignedDate);
+                entity.Property(f => f.ScheduledRepairDate);
+                entity.Property(f => f.Diagnoses)
+                .HasMaxLength(255);
+                entity.Property(f => f.Notes)
+                .HasMaxLength(255);
             });
 
             modelBuilder.Entity<FaultStatus>(entity =>
