@@ -11,7 +11,7 @@
         public DateTime? ResolutionDate { get; set; }
         public DateTime? AssignedDate { get; set; }
         public DateTime? ScheduledRepairDate { get; set; }
-        public string? Diagnoses { get; set; }
+        public string? Diagnosis { get; set; }
         public string? Notes { get; set; }
 
         public FridgeAllocation FridgeAllocation { get; set; }

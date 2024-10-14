@@ -1,5 +1,7 @@
 ﻿using FaultSubsystem.Data;
+using FaultSubsystem.Models.CustomerModels;
 using FaultSubsystem.Models.EmployeeModels;
+using FaultSubsystem.Models.Fault;
 using FaultSubsystem.Models.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +57,7 @@ namespace FaultSubsystem.Controllers
         public async Task<IActionResult> AssignFaultReport(int faultID)
         {
             // Get employee's ID (should check if user is logged in)
-            var employeeID = GetCurrentEmployeeID();
+            int employeeID = GetCurrentEmployeeID();
 
             // Find the fault report and assign the employee
             var faultReport = await _dBContext.FaultReport.FindAsync(faultID);
@@ -69,6 +71,135 @@ namespace FaultSubsystem.Controllers
 
             // Redirect back to the list of unassigned fault reports
             return RedirectToAction(nameof(ViewUnassignedFaultyFridges));
+        }
+
+        public async Task<IActionResult> ViewAssignedFaultReports()
+        {
+            int employeeID = GetCurrentEmployeeID();
+
+            // Check if found
+
+            var faultReports = await _dBContext.FaultReport
+                .Where(fr => fr.EmployeeID == employeeID && fr.FaultStatus.StatusName != "Fixed")
+                .Select(fr => new FaultReportTechnicianViewModel
+                {
+                    FaultID = fr.FaultID,
+                    FaultDescription = fr.FaultDescription,
+                    ReportDate = fr.ReportDate.ToShortDateString(),
+                    FaultStatus = fr.FaultStatus.StatusName,
+                    AssignedDate = fr.AssignedDate.HasValue ? fr.AssignedDate.Value.ToShortDateString() : "N/A",
+                    ScheduledRepairDate = fr.ScheduledRepairDate.HasValue ? fr.ScheduledRepairDate.Value.ToShortDateString() : "N/A",
+                    Diagnosis = fr.Diagnosis
+                })
+                .ToListAsync();
+
+            return View(faultReports);
+        }
+
+        public async Task<IActionResult> EditFaultReport(int id)
+        {
+            var faultReport = await _dBContext.FaultReport
+                .Include(fr => fr.FaultStatus) // Include status for display
+                .FirstOrDefaultAsync(fr => fr.FaultID == id);
+
+            if (faultReport == null)
+            {
+                return NotFound();
+            }
+
+            var faultReportViewModel = new EditFaultReportModel
+            {
+                FaultID = faultReport.FaultID,
+                Diagnosis = faultReport.Diagnosis, // Assuming Diagnosis exists
+                FaultStatusID = faultReport.FaultStatusID,
+                ScheduledRepairDate = faultReport.ScheduledRepairDate.HasValue ? faultReport.ScheduledRepairDate.Value : null,
+                Notes = faultReport.Notes,
+                AvailableStatuses = await _dBContext.FaultStatus.ToListAsync() // Dropdown for statuses
+            };
+
+            return View(faultReportViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditFaultReport(EditFaultReportModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var faultReport = await _dBContext.FaultReport.FindAsync(model.FaultID);
+
+                if (faultReport == null)
+                {
+                    return NotFound();
+                }
+
+                // Update the fault report with the new diagnosis and status
+                faultReport.Diagnosis = model.Diagnosis;
+                faultReport.FaultStatusID = model.FaultStatusID;
+                faultReport.ScheduledRepairDate = model.ScheduledRepairDate;
+                faultReport.Notes = model.Notes;
+
+                await _dBContext.SaveChangesAsync();
+
+                return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
+            }
+
+            // If model state is invalid, return the form with validation errors
+            model.AvailableStatuses = await _dBContext.FaultStatus.ToListAsync();
+            return View(model);
+        }
+
+        public async Task<IActionResult> ViewFaultReportsHistory()
+        {
+            int employeeID = GetCurrentEmployeeID();
+
+            // Check if found
+
+            var faultReports = await _dBContext.FaultReport
+                .Where(fr => fr.EmployeeID == employeeID && fr.FaultStatus.StatusName == "Fixed")
+                .Select(fr => new FaultReportTechnicianViewModel
+                {
+                    FaultID = fr.FaultID,
+                    FaultDescription = fr.FaultDescription,
+                    ReportDate = fr.ReportDate.ToShortDateString(),
+                    FaultStatus = fr.FaultStatus.StatusName,
+                    AssignedDate = fr.AssignedDate.HasValue ? fr.AssignedDate.Value.ToShortDateString() : "N/A",
+                    ScheduledRepairDate = fr.ScheduledRepairDate.HasValue ? fr.ScheduledRepairDate.Value.ToShortDateString() : "N/A",
+                    Diagnosis = fr.Diagnosis
+                })
+                .ToListAsync();
+
+            return View(faultReports);
+        }
+
+        public async Task<IActionResult> FaultReportDetails(int faultID)
+        {
+            var faultReport = await _dBContext.FaultReport
+                .Include(fr => fr.FaultStatus)
+                .Include(fr => fr.FridgeAllocation)
+                .ThenInclude(fa => fa.Fridge)
+                .FirstOrDefaultAsync(fr => fr.FaultID == faultID);
+
+            if (faultReport == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new FaultReportDetailsViewModel
+            {
+                FaultID = faultReport.FaultID,
+                FaultDescription = faultReport.FaultDescription,
+                FaultStatus = faultReport.FaultStatus.StatusName,
+                Diagnosis = faultReport.Diagnosis,
+                Notes = faultReport.Notes,
+                ScheduledRepairDate = faultReport.ScheduledRepairDate?.ToShortDateString() ?? "N/A",
+                ReportDate = faultReport.ReportDate.ToShortDateString(),
+                ResolutionDate = faultReport.ResolutionDate?.ToShortDateString() ?? "Not Resolved",
+                FridgeModel = faultReport.FridgeAllocation.Fridge.FridgeModel,
+                SerialNumber = faultReport.FridgeAllocation.Fridge.SerialNumber,
+                DateAcquired = faultReport.FridgeAllocation.Fridge.DateAcquired.ToShortDateString()
+            };
+
+            return View(viewModel);
         }
 
         private int GetCurrentEmployeeID()

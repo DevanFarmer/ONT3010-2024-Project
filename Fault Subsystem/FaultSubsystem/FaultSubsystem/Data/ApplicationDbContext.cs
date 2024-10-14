@@ -65,7 +65,7 @@ namespace FaultSubsystem.Data
                 entity.Property(f => f.ResolutionDate);
                 entity.Property(f => f.AssignedDate);
                 entity.Property(f => f.ScheduledRepairDate);
-                entity.Property(f => f.Diagnoses)
+                entity.Property(f => f.Diagnosis)
                 .HasMaxLength(255);
                 entity.Property(f => f.Notes)
                 .HasMaxLength(255);

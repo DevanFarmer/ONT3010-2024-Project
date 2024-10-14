@@ -1,0 +1,35 @@
+﻿@model IEnumerable<FaultSubsystem.Models.Fault.FaultReportTechnicianViewModel>
+
+<h2>Your Assigned Fault Reports</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Report Date</th>
+            <th>Status</th>
+            <th>Assigned Date</th>
+            <th>Scheduled Repair Date</th>
+            <th>Diagnosis</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fault in Model)
+        {
+            <tr>
+                <td>@fault.FaultDescription</td>
+                <td>@fault.ReportDate</td>
+                <td>@fault.FaultStatus</td>
+                <td>@fault.AssignedDate</td>
+                <td>@fault.ScheduledRepairDate</td>
+                <td>@fault.Diagnosis</td>
+                <td>
+                    <a href="@Url.Action("FaultReportDetails", new { faultID = fault.FaultID })" class="btn btn-primary">
+                        Edit Fault Report
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

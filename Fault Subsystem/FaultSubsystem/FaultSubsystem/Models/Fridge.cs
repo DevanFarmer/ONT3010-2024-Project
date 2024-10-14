@@ -8,7 +8,7 @@
         public int LocationID { get; set; }
         public string FridgeModel { get; set; }
         public string SerialNumber { get; set; }
-        public string DateAcquired { get; set; }
+        public DateTime DateAcquired { get; set; }
 
         public Supplier Supplier { get; set; }
         public Status Status { get; set; }

@@ -1,0 +1,25 @@
+﻿@model FaultSubsystem.Models.Fault.FaultReportDetailsViewModel
+
+<h2>Fault Report Details</h2>
+
+<div class="fault-details">
+    <h3>Customer Information Given</h3>
+    <p><strong>Fault Description:</strong> @Model.FaultDescription</p>
+    <p><strong>Report Date:</strong> @Model.ReportDate</p>
+
+    <h3>Fault Details</h3>
+    <p><strong>Diagnosis:</strong> @Model.Diagnosis</p>
+    <p><strong>Fault Status:</strong> @Model.FaultStatus</p>
+    <p><strong>Notes:</strong> @Model.Notes</p>
+    <p><strong>Scheduled Repair Date:</strong> @Model.ScheduledRepairDate</p>
+    <p><strong>Resolution Date:</strong> @Model.ResolutionDate</p>
+
+    <h3>Fridge Details</h3>
+    <p><strong>Fridge Model:</strong> @Model.FridgeModel</p>
+    <p><strong>Serial Number:</strong> @Model.SerialNumber</p>
+    <p><strong>Date Acquired:</strong> @Model.DateAcquired</p>
+
+    <a href="@Url.Action("EditFaultReport", new { id = Model.FaultID })" class="btn btn-primary">
+        Edit Fault Report
+    </a>
+</div>
