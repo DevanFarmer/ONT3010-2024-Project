@@ -164,7 +164,10 @@ namespace FaultSubsystem.Data
                 entity.HasKey(s => s.SupplierID);   // Primary Key
                 // Columns
                 entity.Property(s => s.SupplierName)
-                .HasMaxLength(100)
+                .HasMaxLength(50)
+                .IsRequired();
+                entity.Property(s => s.SupplierPhoneNumber)
+                .HasMaxLength(50)
                 .IsRequired();
             });
 
