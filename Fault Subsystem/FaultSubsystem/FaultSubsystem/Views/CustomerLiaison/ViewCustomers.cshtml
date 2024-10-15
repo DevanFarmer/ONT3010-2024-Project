@@ -1,0 +1,38 @@
+﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.CustomerViewModel>
+
+<h2>Customers</h2>
+
+<form method="get">
+    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Search by Name..." />
+    <input type="submit" value="Search" />
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="ViewCustomers" asp-route-sortOrder="@ViewBag.FirstNameSortParm">First Name</a>
+            </th>
+            <th>
+                <a asp-action="ViewCustomers" asp-route-sortOrder="@ViewBag.LastNameSortParm">Last Name</a>
+            </th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td>@customer.FirstName</td>
+                <td>@customer.LastName</td>
+                <td>@customer.Email</td>
+                <td>@customer.PhoneNumber</td>
+                <td>
+                    <a asp-action="EditCustomer" asp-route-id="@customer.CustomerID" class="btn btn-primary">Edit Information</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
