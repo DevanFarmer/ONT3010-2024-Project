@@ -13,5 +13,6 @@
         public Supplier Supplier { get; set; }
         public Status Status { get; set; }
         public Location Location { get; set; }
+        public ICollection<FridgeAllocation> FridgeAllocation { get; set; }
     }
 }

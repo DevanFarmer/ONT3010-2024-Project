@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Supplier>
+
+<h2>Suppliers</h2>
+
+<form method="get" action="@Url.Action("ViewSuppliers", "InventoryLiaison")">
+    <input type="text" name="searchString" placeholder="Search by supplier name" value="@ViewData["CurrentFilter"]" />
+    <input type="submit" value="Search" />
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th><a asp-action="ViewSuppliers" asp-route-sortOrder="@ViewData["SupplierNameSortParm"]">Supplier Name</a></th>
+            <th>Phone Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var supplier in Model)
+        {
+            <tr>
+                <td>@supplier.SupplierName</td>
+                <td>@supplier.SupplierPhoneNumber</td>
+                <td>
+                    <a asp-action="EditSupplier" asp-route-id="@supplier.SupplierID" class="btn btn-primary">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="AddSupplier" class="btn btn-success">Add New Supplier</a>
+<a asp-action="Dashboard" asp-controller="InventoryLiaison" class="btn btn-secondary">Back</a>

@@ -6,5 +6,6 @@
         public int UserID { get; set; }
 
         public User User { get; set; }
+        public ICollection<FridgeAllocation> FridgeAllocation { get; set; }
     }
 }

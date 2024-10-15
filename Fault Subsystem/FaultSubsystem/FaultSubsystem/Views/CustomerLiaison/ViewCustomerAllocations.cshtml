@@ -1,0 +1,28 @@
+﻿@model FaultSubsystem.Models.CustomerLiaison.CustomerAllocationsViewModel
+
+<h2>Fridge Allocations for @Model.FirstName @Model.LastName</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fridge Model</th>
+            <th>Serial Number</th>
+            <th>Allocation Date</th>
+            <th>Return Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var allocation in Model.Allocations)
+        {
+            <tr>
+                <td>@allocation.FridgeModel</td>
+                <td>@allocation.SerialNumber</td>
+                <td>@allocation.AllocationDate</td>
+                <td>@allocation.ReturnDate</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("AddFridgeAllocation", new { customerId = Model.CustomerID })" class="btn btn-primary">Add New Allocation</a>
+<a href="@Url.Action("Dashboard")" class="btn btn-secondary">Back</a>
