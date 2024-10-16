@@ -38,13 +38,14 @@ namespace FaultSubsystem.Controllers
                 .Include(fr => fr.FaultStatus)
                 .Include(fr => fr.FridgeAllocation)
                     .ThenInclude(fa => fa.Fridge)
+                .ThenInclude(f => f.Inventory)
                 .Where(fr => fr.EmployeeID == null)
                 .Select(fr => new UnassignedFaultReportViewModel
                 {
                     FaultID = fr.FaultID,
                     FaultDescription = fr.FaultDescription,
                     FaultStatus = fr.FaultStatus.StatusName,
-                    FridgeModel = fr.FridgeAllocation.Fridge.FridgeModel,
+                    FridgeModel = fr.FridgeAllocation.Fridge.Inventory.FridgeModel,
                     SerialNumber = fr.FridgeAllocation.Fridge.SerialNumber,
                     AllocationDate = fr.FridgeAllocation.AllocationDate.ToShortDateString()
                 })
@@ -176,7 +177,8 @@ namespace FaultSubsystem.Controllers
             var faultReport = await _dBContext.FaultReport
                 .Include(fr => fr.FaultStatus)
                 .Include(fr => fr.FridgeAllocation)
-                .ThenInclude(fa => fa.Fridge)
+                    .ThenInclude(fa => fa.Fridge)
+                        .ThenInclude(f => f.Inventory)
                 .FirstOrDefaultAsync(fr => fr.FaultID == faultID);
 
             if (faultReport == null)
@@ -194,7 +196,7 @@ namespace FaultSubsystem.Controllers
                 ScheduledRepairDate = faultReport.ScheduledRepairDate?.ToShortDateString() ?? "N/A",
                 ReportDate = faultReport.ReportDate.ToShortDateString(),
                 ResolutionDate = faultReport.ResolutionDate?.ToShortDateString() ?? "Not Resolved",
-                FridgeModel = faultReport.FridgeAllocation.Fridge.FridgeModel,
+                FridgeModel = faultReport.FridgeAllocation.Fridge.Inventory.FridgeModel,
                 SerialNumber = faultReport.FridgeAllocation.Fridge.SerialNumber,
                 DateAcquired = faultReport.FridgeAllocation.Fridge.DateAcquired.ToShortDateString()
             };

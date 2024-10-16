@@ -138,8 +138,10 @@ namespace FaultSubsystem.Controllers
         public async Task<IActionResult> ViewCustomerAllocations(int customerId)
         {
             var customer = await _dBContext.Customer
+                .Include(c => c.User)
                 .Include(c => c.FridgeAllocation)
                 .ThenInclude(fa => fa.Fridge)
+                .ThenInclude(f => f.Inventory)
                 .FirstOrDefaultAsync(c => c.CustomerID == customerId);
 
             if (customer == null)
@@ -154,7 +156,7 @@ namespace FaultSubsystem.Controllers
                 LastName = customer.User.LastName,
                 Allocations = customer.FridgeAllocation.Select(a => new AllocationViewModel
                 {
-                    FridgeModel = a.Fridge.FridgeModel,
+                    FridgeModel = a.Fridge.Inventory.FridgeModel,
                     SerialNumber = a.Fridge.SerialNumber,
                     AllocationDate = a.AllocationDate.ToShortDateString(),
                     ReturnDate = a.ReturnDate.HasValue ? a.ReturnDate.Value.ToShortDateString() : "N/A"
@@ -174,7 +176,10 @@ namespace FaultSubsystem.Controllers
                     .Select(f => new SelectListItem
                     {
                         Value = f.FridgeID.ToString(),
-                        Text = f.FridgeModel + " - " + f.SerialNumber
+                        Text = _dBContext.Inventory
+                                .Where(i => i.FridgeTypeID == f.FridgeTypeID)
+                                .Select(i => i.FridgeModel)
+                                .FirstOrDefault() + " - " + f.SerialNumber
                     }).ToList()
             };
 

@@ -16,6 +16,7 @@ namespace FaultSubsystem.Data
         public DbSet<FaultStatus> FaultStatus { get; set; }
         public DbSet<Fridge> Fridge { get; set; }
         public DbSet<FridgeAllocation> FridgeAllocation { get; set; }
+        public DbSet<Inventory> Inventory { get; set; }
         public DbSet<Location> Location { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Status> Status { get; set; }
@@ -86,20 +87,14 @@ namespace FaultSubsystem.Data
                 entity.ToTable("Fridge");         // Table Name
                 entity.HasKey(f => f.FridgeID);   // Primary Key
                 // Columns
-                entity.Property(f => f.SupplierID)
-                .HasMaxLength(100)
+                entity.Property(f => f.FridgeTypeID)
                 .IsRequired();
                 entity.Property(f => f.StatusID)
-                .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.LocationID)
-                .HasMaxLength(100)
-                .IsRequired();
-                entity.Property(f => f.FridgeModel)
-                .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.SerialNumber)
-                .HasMaxLength(100)
+                .HasMaxLength(50)
                 .IsRequired();
                 entity.Property(f => f.DateAcquired)
                 .IsRequired();
@@ -119,6 +114,20 @@ namespace FaultSubsystem.Data
                 entity.Property(f => f.AllocationDate)
                 .IsRequired();
                 entity.Property(f => f.ReturnDate);
+            });
+
+            modelBuilder.Entity<Inventory>(entity =>
+            {
+                entity.ToTable("Inventory");         // Table Name
+                entity.HasKey(f => f.FridgeTypeID);   // Primary Key
+                // Columns
+                entity.Property(f => f.SupplierID)
+                .IsRequired();
+                entity.Property(f => f.FridgeModel)
+                .HasMaxLength(50)
+                .IsRequired();
+                entity.Property(f => f.Quantity)
+                .IsRequired();
             });
 
             modelBuilder.Entity<Location>(entity =>

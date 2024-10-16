@@ -11,10 +11,14 @@
         public string City { get; set; }
         public string PostalCode { get; set; }
 
-        public string FaultDescription { get; set; }
-        public string FaultStatus { get; set; }
-
         public string AllocationDate { get; set; }
         public string? ReturnDate { get; set; }
+        public FaultyFridgeDetailsFaultReportViewModel FaultReport { get; set; }
+    }
+
+    public class FaultyFridgeDetailsFaultReportViewModel
+    {
+        public string FaultDescription { get; set; }
+        public string FaultStatus { get; set; }
     }
 }

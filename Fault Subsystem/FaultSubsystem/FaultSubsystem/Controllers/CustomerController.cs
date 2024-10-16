@@ -48,12 +48,13 @@ namespace FaultSubsystem.Controllers
         {
             var allocatedFridges = await (from allocation in _dBContext.FridgeAllocation
                                           join fridge in _dBContext.Fridge on allocation.FridgeID equals fridge.FridgeID
+                                          join inventory in _dBContext.Inventory on fridge.FridgeTypeID equals inventory.FridgeTypeID
                                           join location in _dBContext.Location on fridge.LocationID equals location.LocationID
                                           where allocation.CustomerID == customerID
                                           select new AllocatedFridgesViewModel
                                           {
                                               FridgeID = fridge.FridgeID,
-                                              FridgeModel = fridge.FridgeModel,
+                                              FridgeModel = inventory.FridgeModel,
                                               SerialNumber = fridge.SerialNumber,
                                               Addressline1 = location.AddressLine1,
                                               Addressline2 = location.AddressLine2,
@@ -72,7 +73,7 @@ namespace FaultSubsystem.Controllers
                                     .Where(f => f.FridgeID == fridgeID)
                                     .Select(fa => new AllocatedFridgeDetailsViewModel
                                     {
-                                        FridgeModel = fa.Fridge.FridgeModel,
+                                        FridgeModel = fa.Fridge.Inventory.FridgeModel,
                                         SerialNumber = fa.Fridge.SerialNumber,
                                         Addressline1 = fa.Fridge.Location.AddressLine1,
                                         Addressline2 = fa.Fridge.Location.AddressLine2,
@@ -144,6 +145,7 @@ namespace FaultSubsystem.Controllers
             // Check Report Records for Status, If not 'Fixed' then it is still faulty
             var faultyFridges = await _dBContext.FridgeAllocation
                 .Include(fa => fa.Fridge)
+                    .ThenInclude(f => f.Inventory)
                 .Include(fa => fa.FaultReport)
                     .ThenInclude(fr => fr.FaultStatus)
                 .Where(fa => fa.CustomerID == customer.CustomerID) // Filter by customer
@@ -151,10 +153,10 @@ namespace FaultSubsystem.Controllers
                 .Select(fa => new FaultyFridgesViewModel
                 {
                     FridgeID = fa.FridgeID,
-                    FridgeModel = fa.Fridge.FridgeModel,
+                    FridgeModel = fa.Fridge.Inventory.FridgeModel,
                     SerialNumber = fa.Fridge.SerialNumber,
-                    FaultDescription = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultDescription,
-                    FaultStatus = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultStatus.StatusName,
+                    FaultDescription = fa.FaultReport.First(fr => fr.FaultStatus.StatusName != "Fixed").FaultDescription,
+                    FaultStatus = fa.FaultReport.First(fr => fr.FaultStatus.StatusName != "Fixed").FaultStatus.StatusName,
                     ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
                 })
                 .ToListAsync();
@@ -166,14 +168,13 @@ namespace FaultSubsystem.Controllers
         {
             var faultyFridgeDetails = await _dBContext.FridgeAllocation
                 .Include(fa => fa.Fridge)
-                .Include(fa => fa.Fridge.Location)
+                    .ThenInclude(f => f.Location)
                 .Include(fa => fa.FaultReport)
                     .ThenInclude(fr => fr.FaultStatus) // Include fault status
                 .Where(fa => fa.FridgeID == fridgeID) // Filter by FridgeID
-                .Where(fa => fa.FaultReport.Any(fr => fr.FaultStatus.StatusName != "Fixed")) // Only faulty fridges
                 .Select(fa => new FaultyFridgeDetailsViewModel
                 {
-                    FridgeModel = fa.Fridge.FridgeModel,
+                    // Get Fridge Model
                     SerialNumber = fa.Fridge.SerialNumber,
                     Addressline1 = fa.Fridge.Location.AddressLine1,
                     Addressline2 = fa.Fridge.Location.AddressLine2,
@@ -183,8 +184,17 @@ namespace FaultSubsystem.Controllers
                     ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "Not Returned",
 
                     // Selecting the first fault report that isn't "Fixed" for the fridge allocation
-                    FaultDescription = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultDescription,
-                    FaultStatus = fa.FaultReport.FirstOrDefault(fr => fr.FaultStatus.StatusName != "Fixed").FaultStatus.StatusName
+                    FaultReport = fa.FaultReport
+                        .Where(fr => fr.FaultStatus.StatusName != "Fixed")
+                        .Select(fr => new FaultyFridgeDetailsFaultReportViewModel
+                        {
+                            FaultDescription = fr.FaultDescription,
+                            FaultStatus = fr.FaultStatus.StatusName
+                        }).FirstOrDefault() ?? new FaultyFridgeDetailsFaultReportViewModel
+                        {
+                            FaultDescription = "N/A",
+                            FaultStatus = "N/A"
+                        }
                 })
                 .FirstOrDefaultAsync();
 

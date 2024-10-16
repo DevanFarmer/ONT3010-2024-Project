@@ -60,9 +60,11 @@ namespace FaultSubsystem.Controllers
             // Fetch the fridges allocated to this customer
             var allocatedFridges = await _dBContext.FridgeAllocation
                 .Where(a => a.CustomerID == customer.CustomerID)
+                .Include(a => a.Fridge)
+                .ThenInclude(f => f.Inventory)
                 .Select(a => new {
                     AllocationID = a.AllocationID,
-                    FridgeName = $"{a.Fridge.FridgeModel}, {a.Fridge.SerialNumber}"
+                    FridgeName = $"{a.Fridge.Inventory.FridgeModel}, {a.Fridge.SerialNumber}"
                 }).ToListAsync();
 
             ViewBag.FridgeList = new SelectList(allocatedFridges, "AllocationID", "FridgeName");
