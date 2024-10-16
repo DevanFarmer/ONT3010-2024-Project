@@ -1,0 +1,19 @@
+﻿@model Inventory
+
+<form asp-action="EditInventory" method="post">
+    <input type="hidden" asp-for="FridgeTypeID" />
+    <div>
+        <label>Fridge Model:</label>
+        <input asp-for="FridgeModel" />
+    </div>
+    <div>
+        <label>Quantity:</label>
+        <input asp-for="Quantity" />
+    </div>
+    <div>
+        <label>Supplier:</label>
+        <select asp-for="SupplierID" asp-items="ViewBag.Suppliers"></select>
+    </div>
+    <button type="submit">Save</button>
+    <button asp-action="ViewInventory">Cancel</button>
+</form>

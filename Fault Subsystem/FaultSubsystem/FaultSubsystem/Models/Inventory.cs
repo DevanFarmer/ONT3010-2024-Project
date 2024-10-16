@@ -12,5 +12,7 @@ namespace FaultSubsystem.Models
         public string FridgeModel { get; set; }
         [Required]
         public int Quantity { get; set; }
+
+        public Supplier Supplier { get; set; }
     }
 }

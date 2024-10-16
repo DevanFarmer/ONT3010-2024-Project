@@ -4,6 +4,7 @@ using FaultSubsystem.Models.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FaultSubsystem.Controllers
 {
@@ -29,6 +30,7 @@ namespace FaultSubsystem.Controllers
             return RedirectToAction("Dashboard", "Shared");
         }
 
+        #region Suppliers
         // View Suppliers
         public async Task<IActionResult> ViewSuppliers(string sortOrder, string searchString)
         {
@@ -107,5 +109,74 @@ namespace FaultSubsystem.Controllers
             }
             return View(supplier);
         }
+        #endregion
+
+        #region Inventory
+        // View Inventory
+        public async Task<IActionResult> ViewInventory()
+        {
+            var inventory = await _dBContext.Inventory.Include(i => i.Supplier).ToListAsync();
+            return View(inventory);
+        }
+
+        // Get Add Inventory
+        public async Task<IActionResult> AddInventory()
+        {
+            var suppliers = await _dBContext.Supplier.ToListAsync();
+            ViewBag.Suppliers = new SelectList(suppliers, "SupplierID", "SupplierName");
+            return View();
+        }
+
+        // Post Add Inventory
+        [HttpPost]
+        public async Task<IActionResult> AddInventory(Inventory inventory)
+        {
+            if (ModelState.IsValid)
+            {
+                _dBContext.Inventory.Add(inventory);
+                await _dBContext.SaveChangesAsync();
+                return RedirectToAction(nameof(ViewInventory));
+            }
+
+            var suppliers = await _dBContext.Supplier.ToListAsync();
+            ViewBag.Suppliers = new SelectList(suppliers, "SupplierID", "SupplierName");
+            return View(inventory);
+        }
+
+        // Get Edit Inventory
+        public async Task<IActionResult> EditInventory(int id)
+        {
+            var inventory = await _dBContext.Inventory.FindAsync(id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+            var suppliers = await _dBContext.Supplier.ToListAsync();
+            ViewBag.Suppliers = new SelectList(suppliers, "SupplierID", "SupplierName", inventory.SupplierID);
+            return View(inventory);
+        }
+
+        // Post Edit Inventory
+        [HttpPost]
+        public async Task<IActionResult> EditInventory(int id, Inventory inventory)
+        {
+            if (id != inventory.FridgeTypeID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _dBContext.Update(inventory);
+                await _dBContext.SaveChangesAsync();
+                return RedirectToAction(nameof(ViewInventory));
+            }
+
+            var suppliers = await _dBContext.Supplier.ToListAsync();
+            ViewBag.Suppliers = new SelectList(suppliers, "SupplierID", "SupplierName", inventory.SupplierID);
+            return View(inventory);
+        }
+        #endregion
     }
 }

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Inventory>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fridge Model</th>
+            <th>Quantity</th>
+            <th>Supplier</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FridgeModel</td>
+                <td>@item.Quantity</td>
+                <td>@item.Supplier.SupplierName</td>
+                <td>
+                    <a asp-action="EditInventory" asp-route-id="@item.FridgeTypeID">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="AddInventory">Add Inventory</a>
