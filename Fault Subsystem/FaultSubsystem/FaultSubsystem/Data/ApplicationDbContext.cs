@@ -208,6 +208,11 @@ namespace FaultSubsystem.Data
                 .HasOne(fr => fr.FridgeAllocation)
                 .WithMany(fa => fa.FaultReport)
                 .HasForeignKey(fr => fr.AllocationID);
+
+            modelBuilder.Entity<Fridge>()
+                .HasOne(f => f.Inventory)
+                .WithMany(i => i.Fridge)
+                .HasForeignKey(f => f.FridgeTypeID);
             //modelBuilder.Entity<Customer>()
             //    .HasOne(c => c.User)
             //    .WithOne(u => u.Customer)

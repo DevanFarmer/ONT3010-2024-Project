@@ -21,8 +21,8 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "Suppliers", Description = "View, Add and Edit supplier information.", Action = "ViewSuppliers", Controller = "InventoryLiaison"},
-                new TileModel {Title = "View Customers", Description = "View all customers and their information.", Action = "ViewInventory", Controller = "InventoryLiaison"}
+                new TileModel {Title = "Inventory", Description = "View , Add and Edit Inventory.", Action = "ViewInventory", Controller = "InventoryLiaison"},
+                new TileModel {Title = "Suppliers", Description = "View, Add and Edit supplier information.", Action = "ViewSuppliers", Controller = "InventoryLiaison"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -66,6 +66,12 @@ namespace FaultSubsystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSupplier(Supplier supplier)
         {
+            var maxSuppliers = await _dBContext.Supplier.MaxAsync(s => (int?)s.SupplierID) ?? 0;
+
+            var newSupplierID = maxSuppliers + 1;
+
+            supplier.SupplierID = newSupplierID;
+
             if (ModelState.IsValid)
             {
                 _dBContext.Add(supplier);
@@ -131,16 +137,15 @@ namespace FaultSubsystem.Controllers
         [HttpPost]
         public async Task<IActionResult> AddInventory(Inventory inventory)
         {
-            if (ModelState.IsValid)
-            {
-                _dBContext.Inventory.Add(inventory);
-                await _dBContext.SaveChangesAsync();
-                return RedirectToAction(nameof(ViewInventory));
-            }
+            var maxInventory = await _dBContext.Inventory.MaxAsync(v => (int?)v.FridgeTypeID) ?? 0;
 
-            var suppliers = await _dBContext.Supplier.ToListAsync();
-            ViewBag.Suppliers = new SelectList(suppliers, "SupplierID", "SupplierName");
-            return View(inventory);
+            var newInventoryID = maxInventory + 1;
+
+            inventory.FridgeTypeID = newInventoryID;
+
+            _dBContext.Inventory.Add(inventory);
+            await _dBContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ViewInventory));
         }
 
         // Get Edit Inventory
@@ -166,16 +171,9 @@ namespace FaultSubsystem.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                _dBContext.Update(inventory);
-                await _dBContext.SaveChangesAsync();
-                return RedirectToAction(nameof(ViewInventory));
-            }
-
-            var suppliers = await _dBContext.Supplier.ToListAsync();
-            ViewBag.Suppliers = new SelectList(suppliers, "SupplierID", "SupplierName", inventory.SupplierID);
-            return View(inventory);
+            _dBContext.Update(inventory);
+            await _dBContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ViewInventory));
         }
         #endregion
     }

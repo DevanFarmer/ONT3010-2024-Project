@@ -31,6 +31,7 @@
                 <td>@customer.PhoneNumber</td>
                 <td>
                     <a asp-action="EditCustomer" asp-route-id="@customer.CustomerID" class="btn btn-primary">Edit Information</a>
+                    <a href="@Url.Action("ViewCustomerAllocations", "CustomerLiaison", new { customerId = customer.CustomerID})" class="btn btn-primary">Manage Allocations</a>
                 </td>
             </tr>
         }

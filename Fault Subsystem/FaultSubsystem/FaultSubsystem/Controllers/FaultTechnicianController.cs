@@ -23,8 +23,9 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "View All Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewUnassignedFaultyFridges", Controller = "FaultTechnician"},
-                new TileModel {Title = "View All Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewFaultReportsHistory", Controller = "FaultTechnician"}
+                new TileModel {Title = "View Your Assigned Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewAssignedFaultReports", Controller = "FaultTechnician"},
+                new TileModel {Title = "View Unassigned Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewUnassignedFaultyFridges", Controller = "FaultTechnician"},
+                new TileModel {Title = "View Fault History", Description = "View previous faults you worked on.", Action = "ViewFaultReportsHistory", Controller = "FaultTechnician"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -43,7 +44,7 @@ namespace FaultSubsystem.Controllers
                 .Select(fr => new UnassignedFaultReportViewModel
                 {
                     FaultID = fr.FaultID,
-                    FaultDescription = fr.FaultDescription,
+                    FaultDescription = fr.FaultDescription ?? "",
                     FaultStatus = fr.FaultStatus.StatusName,
                     FridgeModel = fr.FridgeAllocation.Fridge.Inventory.FridgeModel,
                     SerialNumber = fr.FridgeAllocation.Fridge.SerialNumber,
@@ -68,6 +69,7 @@ namespace FaultSubsystem.Controllers
             }
 
             faultReport.EmployeeID = employeeID;
+            faultReport.AssignedDate = DateTime.Now;
             await _dBContext.SaveChangesAsync();
 
             // Redirect back to the list of unassigned fault reports
@@ -81,16 +83,16 @@ namespace FaultSubsystem.Controllers
             // Check if found
 
             var faultReports = await _dBContext.FaultReport
-                .Where(fr => fr.EmployeeID == employeeID && fr.FaultStatus.StatusName != "Fixed")
+                .Where(fr => fr.EmployeeID == employeeID && fr.FaultStatus.StatusName != "Resolved")
                 .Select(fr => new FaultReportTechnicianViewModel
                 {
                     FaultID = fr.FaultID,
-                    FaultDescription = fr.FaultDescription,
+                    FaultDescription = fr.FaultDescription ?? "",
                     ReportDate = fr.ReportDate.ToShortDateString(),
                     FaultStatus = fr.FaultStatus.StatusName,
                     AssignedDate = fr.AssignedDate.HasValue ? fr.AssignedDate.Value.ToShortDateString() : "N/A",
                     ScheduledRepairDate = fr.ScheduledRepairDate.HasValue ? fr.ScheduledRepairDate.Value.ToShortDateString() : "N/A",
-                    Diagnosis = fr.Diagnosis
+                    Diagnosis = fr.Diagnosis ?? ""
                 })
                 .ToListAsync();
 
@@ -111,10 +113,10 @@ namespace FaultSubsystem.Controllers
             var faultReportViewModel = new EditFaultReportModel
             {
                 FaultID = faultReport.FaultID,
-                Diagnosis = faultReport.Diagnosis, // Assuming Diagnosis exists
+                Diagnosis = faultReport.Diagnosis ?? "",
                 FaultStatusID = faultReport.FaultStatusID,
                 ScheduledRepairDate = faultReport.ScheduledRepairDate.HasValue ? faultReport.ScheduledRepairDate.Value : null,
-                Notes = faultReport.Notes,
+                Notes = faultReport.Notes ?? "",
                 AvailableStatuses = await _dBContext.FaultStatus.ToListAsync() // Dropdown for statuses
             };
 
@@ -124,29 +126,22 @@ namespace FaultSubsystem.Controllers
         [HttpPost]
         public async Task<IActionResult> EditFaultReport(EditFaultReportModel model)
         {
-            if (ModelState.IsValid)
+            var faultReport = await _dBContext.FaultReport.FindAsync(model.FaultID);
+
+            if (faultReport == null)
             {
-                var faultReport = await _dBContext.FaultReport.FindAsync(model.FaultID);
-
-                if (faultReport == null)
-                {
-                    return NotFound();
-                }
-
-                // Update the fault report with the new diagnosis and status
-                faultReport.Diagnosis = model.Diagnosis;
-                faultReport.FaultStatusID = model.FaultStatusID;
-                faultReport.ScheduledRepairDate = model.ScheduledRepairDate;
-                faultReport.Notes = model.Notes;
-
-                await _dBContext.SaveChangesAsync();
-
-                return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
+                return NotFound();
             }
 
-            // If model state is invalid, return the form with validation errors
-            model.AvailableStatuses = await _dBContext.FaultStatus.ToListAsync();
-            return View(model);
+            // Update the fault report with the new diagnosis and status
+            faultReport.Diagnosis = model.Diagnosis ?? "";
+            faultReport.FaultStatusID = model.FaultStatusID;
+            faultReport.ScheduledRepairDate = model.ScheduledRepairDate;
+            faultReport.Notes = model.Notes ?? "";
+
+            await _dBContext.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
         }
 
         public async Task<IActionResult> ViewFaultReportsHistory()
@@ -156,16 +151,16 @@ namespace FaultSubsystem.Controllers
             // Check if found
 
             var faultReports = await _dBContext.FaultReport
-                .Where(fr => fr.EmployeeID == employeeID && fr.FaultStatus.StatusName == "Fixed")
+                .Where(fr => fr.EmployeeID == employeeID && fr.FaultStatus.StatusName == "Resolved")
                 .Select(fr => new FaultReportTechnicianViewModel
                 {
                     FaultID = fr.FaultID,
-                    FaultDescription = fr.FaultDescription,
+                    FaultDescription = fr.FaultDescription ?? "",
                     ReportDate = fr.ReportDate.ToShortDateString(),
                     FaultStatus = fr.FaultStatus.StatusName,
                     AssignedDate = fr.AssignedDate.HasValue ? fr.AssignedDate.Value.ToShortDateString() : "N/A",
                     ScheduledRepairDate = fr.ScheduledRepairDate.HasValue ? fr.ScheduledRepairDate.Value.ToShortDateString() : "N/A",
-                    Diagnosis = fr.Diagnosis
+                    Diagnosis = fr.Diagnosis ?? ""
                 })
                 .ToListAsync();
 
@@ -189,10 +184,10 @@ namespace FaultSubsystem.Controllers
             var viewModel = new FaultReportDetailsViewModel
             {
                 FaultID = faultReport.FaultID,
-                FaultDescription = faultReport.FaultDescription,
+                FaultDescription = faultReport.FaultDescription ?? "",
                 FaultStatus = faultReport.FaultStatus.StatusName,
-                Diagnosis = faultReport.Diagnosis,
-                Notes = faultReport.Notes,
+                Diagnosis = faultReport.Diagnosis ?? "",
+                Notes = faultReport.Notes ?? "",
                 ScheduledRepairDate = faultReport.ScheduledRepairDate?.ToShortDateString() ?? "N/A",
                 ReportDate = faultReport.ReportDate.ToShortDateString(),
                 ResolutionDate = faultReport.ResolutionDate?.ToShortDateString() ?? "Not Resolved",

@@ -74,7 +74,7 @@
         <header class="top-bar">
             <div class="logo-section">
                 <img src="~/images/ChillTech Logo.jpg" alt="Logo" class="logo">
-                <a href="@Url.Action("Dashboard", User.FindFirstValue(ClaimTypes.Role))" class="home-link">Home</a>
+                <a href="@Url.Action("Dashboard", User.FindFirstValue(ClaimTypes.Role).Replace(" ", ""))" class="home-link">Home</a>
             </div>
             <div class="user-info">
                 @{

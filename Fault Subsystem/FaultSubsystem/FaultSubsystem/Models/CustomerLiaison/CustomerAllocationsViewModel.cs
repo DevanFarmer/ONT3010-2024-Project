@@ -5,6 +5,7 @@
         public int CustomerID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        //public ErrorMessages ErrorMessage { get; set; }
 
         public List<AllocationViewModel> Allocations { get; set; }
 
@@ -16,5 +17,13 @@
         public string SerialNumber { get; set; }
         public string AllocationDate { get; set; }
         public string ReturnDate { get; set; }
+    }
+
+    public enum ErrorMessages
+    {
+        CustomerNotFound,
+        NoAllocations,
+        FridgeNotFound,
+        NoFridgesFound
     }
 }

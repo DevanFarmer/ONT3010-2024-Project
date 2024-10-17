@@ -16,5 +16,5 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Allocate Fridge</button>
-    <a asp-action="ViewCustomerAllocations" asp-route-id="@Model.CustomerID" class="btn btn-secondary">Cancel</a>
+    <a href="@Url.Action("ViewCustomerAllocations", "CustomerLiaison", new { customerId = Model.CustomerID})" class="btn btn-primary">Back</a>
 </form>

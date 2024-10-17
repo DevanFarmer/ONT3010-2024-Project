@@ -23,8 +23,7 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel> 
             {
-                new TileModel {Title = "Fridge Allocation", Description = "Allocate fridges to customers.", Action = "ViewCustomerAllocations", Controller = "CustomerLiaison"},
-                new TileModel {Title = "View Customers", Description = "View all customers and their information.", Action = "ViewCustomers", Controller = "CustomerLiaison"}
+                new TileModel {Title = "Manage Customers", Description = "Manage customer information and allocations.", Action = "ViewCustomers", Controller = "CustomerLiaison"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -137,27 +136,37 @@ namespace FaultSubsystem.Controllers
         #region Manage Allocations
         public async Task<IActionResult> ViewCustomerAllocations(int customerId)
         {
+            // Log the incoming customer ID for debugging purposes
+            Console.WriteLine($"Customer ID: {customerId}");
+
+            // Fetch the customer by ID
             var customer = await _dBContext.Customer
-                .Include(c => c.User)
-                .Include(c => c.FridgeAllocation)
-                .ThenInclude(fa => fa.Fridge)
-                .ThenInclude(f => f.Inventory)
+                .Include(c => c.User) // Include the User information to avoid null reference later
                 .FirstOrDefaultAsync(c => c.CustomerID == customerId);
 
+            // Check if the customer exists
             if (customer == null)
             {
-                return NotFound();
+                return NotFound("Customer Not Found.");
             }
 
+            // Fetch the allocations for the customer
+            var allocations = await _dBContext.FridgeAllocation
+                .Include(fa => fa.Fridge)
+                    .ThenInclude(f => f.Inventory)
+                .Where(fa => fa.CustomerID == customer.CustomerID)
+                .ToListAsync();
+
+            // Prepare the view model
             var model = new CustomerAllocationsViewModel
             {
                 CustomerID = customer.CustomerID,
-                FirstName = customer.User.FirstName,
-                LastName = customer.User.LastName,
-                Allocations = customer.FridgeAllocation.Select(a => new AllocationViewModel
+                FirstName = customer.User?.FirstName ?? "Unknown", // Default value if User is null
+                LastName = customer.User?.LastName ?? "Unknown",   // Default value if User is null
+                Allocations = allocations.Select(a => new AllocationViewModel
                 {
-                    FridgeModel = a.Fridge.Inventory.FridgeModel,
-                    SerialNumber = a.Fridge.SerialNumber,
+                    FridgeModel = a.Fridge?.Inventory?.FridgeModel ?? "Fridge Not Found", // Use null-conditional operator
+                    SerialNumber = a.Fridge?.SerialNumber ?? "N/A", // Use null-conditional operator
                     AllocationDate = a.AllocationDate.ToShortDateString(),
                     ReturnDate = a.ReturnDate.HasValue ? a.ReturnDate.Value.ToShortDateString() : "N/A"
                 }).ToList()

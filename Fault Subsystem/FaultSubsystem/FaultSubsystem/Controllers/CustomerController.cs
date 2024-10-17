@@ -149,14 +149,14 @@ namespace FaultSubsystem.Controllers
                 .Include(fa => fa.FaultReport)
                     .ThenInclude(fr => fr.FaultStatus)
                 .Where(fa => fa.CustomerID == customer.CustomerID) // Filter by customer
-                .Where(fa => fa.FaultReport.Any(fr => fr.FaultStatus.StatusName != "Fixed")) // Filter by reports that are not fixed
+                .Where(fa => fa.FaultReport.Any(fr => fr.FaultStatus.StatusName != "Resolved")) // Filter by reports that are not fixed
                 .Select(fa => new FaultyFridgesViewModel
                 {
                     FridgeID = fa.FridgeID,
                     FridgeModel = fa.Fridge.Inventory.FridgeModel,
                     SerialNumber = fa.Fridge.SerialNumber,
-                    FaultDescription = fa.FaultReport.First(fr => fr.FaultStatus.StatusName != "Fixed").FaultDescription,
-                    FaultStatus = fa.FaultReport.First(fr => fr.FaultStatus.StatusName != "Fixed").FaultStatus.StatusName,
+                    FaultDescription = fa.FaultReport.First(fr => fr.FaultStatus.StatusName != "Resolved").FaultDescription,
+                    FaultStatus = fa.FaultReport.First(fr => fr.FaultStatus.StatusName != "Resolved").FaultStatus.StatusName,
                     ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
                 })
                 .ToListAsync();
@@ -185,7 +185,7 @@ namespace FaultSubsystem.Controllers
 
                     // Selecting the first fault report that isn't "Fixed" for the fridge allocation
                     FaultReport = fa.FaultReport
-                        .Where(fr => fr.FaultStatus.StatusName != "Fixed")
+                        .Where(fr => fr.FaultStatus.StatusName != "Resolved")
                         .Select(fr => new FaultyFridgeDetailsFaultReportViewModel
                         {
                             FaultDescription = fr.FaultDescription,

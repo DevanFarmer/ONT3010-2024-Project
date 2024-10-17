@@ -3,6 +3,7 @@
 <h2>Edit Supplier</h2>
 
 <form asp-action="EditSupplier">
+    <input type="hidden" asp-for="SupplierID" />
     <div class="form-group">
         <label asp-for="SupplierName" class="control-label"></label>
         <input asp-for="SupplierName" class="form-control" />
