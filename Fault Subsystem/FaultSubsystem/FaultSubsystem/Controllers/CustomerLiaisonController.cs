@@ -23,7 +23,7 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel> 
             {
-                new TileModel {Title = "Fridge Allocation", Description = "Allocate fridges to customers.", Action = "Dashboard", Controller = "CustomerLiaison"},
+                new TileModel {Title = "Fridge Allocation", Description = "Allocate fridges to customers.", Action = "ViewCustomerAllocations", Controller = "CustomerLiaison"},
                 new TileModel {Title = "View Customers", Description = "View all customers and their information.", Action = "ViewCustomers", Controller = "CustomerLiaison"}
             };
 

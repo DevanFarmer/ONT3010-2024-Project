@@ -23,8 +23,8 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "Manage Faulty Fridges", Description = "Manage your assigned faulty fridges.", Action = "ReportFault", Controller = "FaultTechnician"},
-                new TileModel {Title = "View All Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewUnassignedFaultyFridges", Controller = "FaultTechnician"}
+                new TileModel {Title = "View All Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewUnassignedFaultyFridges", Controller = "FaultTechnician"},
+                new TileModel {Title = "View All Faults", Description = "View unassigned reports of faulty fridges.", Action = "ViewFaultReportsHistory", Controller = "FaultTechnician"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
