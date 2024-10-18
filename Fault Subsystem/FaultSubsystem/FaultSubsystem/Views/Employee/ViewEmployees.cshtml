@@ -4,6 +4,8 @@
 *@
 @model IEnumerable<FaultSubsystem.Models.EmployeeModels.EmployeeViewModel>
 
+<a href="@Url.Action("Dashboard", "Employee")" class="btn btn-secondary">Back</a>
+
 <h2>Employee List</h2>
 
 <table class="table">
@@ -27,5 +29,3 @@
         }
     </tbody>
 </table>
-
-<a href="@Url.Action("Dashboard", "Employee")" class="btn btn-secondary">Back</a>

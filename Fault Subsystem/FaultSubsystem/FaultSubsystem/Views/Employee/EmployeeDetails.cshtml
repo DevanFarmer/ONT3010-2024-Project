@@ -4,6 +4,8 @@
 *@
 @model FaultSubsystem.Models.EmployeeModels.EmployeeViewDetailsModel
 
+<a href="@Url.Action("ViewEmployees", "Employee")" class="btn btn-secondary">Back to List</a>
+
 <h2>Employee Details</h2>
 
 <div>
@@ -41,5 +43,3 @@
 
     <button type="submit" class="btn btn-primary">Assign Role</button>
 </form>
-
-<a href="@Url.Action("ViewEmployees", "Employee")" class="btn btn-secondary">Back to List</a>

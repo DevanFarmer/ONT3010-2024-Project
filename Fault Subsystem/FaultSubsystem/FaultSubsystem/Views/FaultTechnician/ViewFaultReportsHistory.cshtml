@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.Fault.FaultReportTechnicianViewModel>
 
+@*Back button here*@
+
 <h2>Your Assigned Fault Reports</h2>
 
 <table class="table">
@@ -26,7 +28,7 @@
                 <td>@fault.Diagnosis</td>
                 <td>
                     <a href="@Url.Action("FaultReportDetails", new { faultID = fault.FaultID })" class="btn btn-primary">
-                        Edit Fault Report
+                        View Details
                     </a>
                 </td>
             </tr>

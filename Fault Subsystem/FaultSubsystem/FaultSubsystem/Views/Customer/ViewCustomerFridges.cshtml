@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.AllocatedFridgesViewModel>
 
+<a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary">Back</a>
+<br/>
 <h2>Your Fridges</h2>
 
 <table>
@@ -43,4 +45,3 @@
         }
     </tbody>
 </table>
-<a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary">Back</a>

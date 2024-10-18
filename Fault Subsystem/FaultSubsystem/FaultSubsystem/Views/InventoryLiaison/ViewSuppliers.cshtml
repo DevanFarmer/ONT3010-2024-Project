@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<Supplier>
 
+<a asp-action="Dashboard" asp-controller="InventoryLiaison" class="btn btn-secondary">Back</a>
+<a asp-action="AddSupplier" class="btn btn-success">Add New Supplier</a>
+
 <h2>Suppliers</h2>
 
 <form method="get" action="@Url.Action("ViewSuppliers", "InventoryLiaison")">
@@ -28,6 +31,3 @@
         }
     </tbody>
 </table>
-
-<a asp-action="AddSupplier" class="btn btn-success">Add New Supplier</a>
-<a asp-action="Dashboard" asp-controller="InventoryLiaison" class="btn btn-secondary">Back</a>
