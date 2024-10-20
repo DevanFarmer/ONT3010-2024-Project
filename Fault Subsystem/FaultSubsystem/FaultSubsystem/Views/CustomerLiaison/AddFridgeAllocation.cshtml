@@ -13,8 +13,15 @@
         <select asp-for="SelectedFridgeID" class="form-control" asp-items="Model.AvailableFridges">
             <option value="">-- Select Fridge --</option>
         </select>
+        <span asp-validation-for="SelectedFridgeID" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Allocate Fridge</button>
     <a href="@Url.Action("ViewCustomerAllocations", "CustomerLiaison", new { customerId = Model.CustomerID})" class="btn btn-primary">Back</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -7,6 +7,7 @@ namespace FaultSubsystem.Models.Account
         [Required(ErrorMessage = "First Name is required")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "First Name must be between 3 and 100 characters")]
         public string FirstName { get; set; }
+        
         [Required(ErrorMessage = "Last Name is required")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Last Name must be between 3 and 100 characters")]
         public string LastName { get; set; }
