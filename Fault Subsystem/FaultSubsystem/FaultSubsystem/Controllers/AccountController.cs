@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using FaultSubsystem.Models.Account;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FaultSubsystem.Controllers
 {
@@ -69,6 +70,7 @@ namespace FaultSubsystem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
@@ -180,6 +182,12 @@ namespace FaultSubsystem.Controllers
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        }
+
+        [HttpGet]
+        public IActionResult Unauthorized()
+        {
+            return View();
         }
     }
 }

@@ -1,10 +1,16 @@
 ﻿@using System.Security.Claims;
 @{
-    var actionName = "Login";
+    var actionName = "";
     if (ViewContext.RouteData.Values["Action"].ToString() != null)
     {
         actionName = ViewContext.RouteData.Values["Action"].ToString();
     }
+
+    // Retrieve claim values
+    var surname = User.FindFirstValue(ClaimTypes.Surname);
+    var name = User.FindFirstValue(ClaimTypes.Name);
+    var role = User.FindFirstValue(ClaimTypes.Role);
+    var initial = $"{name?.FirstOrDefault()}{surname?.FirstOrDefault()}";
 }
 
 <!DOCTYPE html>
@@ -51,15 +57,19 @@
 <body>
     @if (!(actionName == "Login" || actionName == "CreateAccount"))  // This will hide the banner on the login page
     {
-        // Retrieve claim values
-        var surname = User.FindFirstValue(ClaimTypes.Surname);
-        var name = User.FindFirstValue(ClaimTypes.Name);
-        var role = User.FindFirstValue(ClaimTypes.Role);
-        var initial = $"{name?.FirstOrDefault()}{surname?.FirstOrDefault()}";
         <header class="top-bar">
             <div class="logo-section">
                 <img src="~/images/ChillTech Logo.jpg" alt="Logo" class="logo">
-                <a href="@Url.Action("Dashboard", role.Replace(" ", ""))" class="home-link">Home</a>
+                @if (role == null)
+                {
+                    <script type="text/javascript">
+                        window.location.href = '@Url.Action("Login", "Account")';
+                    </script>
+                }
+                else
+                {
+                    <a href="@Url.Action("Dashboard", role.Replace(" ", ""))" class="home-link">Home</a>
+                }
             </div>
             <div class="user-info">
                 <span class="user-name">@surname, @name (@role)</span>
@@ -70,7 +80,7 @@
                 </div>
 
                 <!-- Exit icon with tooltip for logout -->
-                <form asp-action="Logout" asp-controller="Account" method="post" style="display:inline;">
+                <form asp-action="Logout" asp-controller="Account" method="post" style="border: none; background: transparent; padding: 0; cursor: pointer;">
                     <button type="submit" class="logout-icon" data-toggle="tooltip" title="Logout">
                         <img src="~/icons/box-arrow-right.svg" alt="Logout" class="logout-icon-svg" />
                     </button>
