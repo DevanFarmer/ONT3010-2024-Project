@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Specialized;
 using FaultSubsystem.Models.CustomerModels;
+using FaultSubsystem.Models.Account;
 
 namespace FaultSubsystem.Controllers
 {
@@ -25,7 +26,7 @@ namespace FaultSubsystem.Controllers
             var tiles = new List<TileModel>
             {
                 new TileModel {Title = "View Employees", Description = "View employee details.", Action = "ViewEmployees", Controller = "Employee"},
-                new TileModel {Title = "Create Employees", Description = "Create new employees from users.", Action = "ViewNonEmployeeUsers", Controller = "Employee"}
+                new TileModel {Title = "Create Employees", Description = "Create new employees from users.", Action = "CreateEmployee", Controller = "Employee"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -93,32 +94,47 @@ namespace FaultSubsystem.Controllers
             return RedirectToAction(nameof(ViewEmployees));
         }
 
-        public async Task<IActionResult> ViewNonEmployeeUsers(string searchString)
+        public IActionResult CreateEmployee()
         {
-            var usersQuery = from u in _dBContext.User
-                             where !(from e in _dBContext.Employee select e.UserID).Contains(u.UserID)
-                             select u;
-
-            // search filter
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                usersQuery = usersQuery.Where(u => u.FirstName.Contains(searchString) || u.LastName.Contains(searchString));
-            }
-
-            var users = await usersQuery.ToListAsync();
-
-            return View(users);
+            return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> CreateEmployee(int userID)
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee(CreateAccountViewModel model)
         {
-            // check if user already exists, just in case
-            var existinEmployee = await _dBContext.Employee.FirstOrDefaultAsync(e => e.UserID == userID);
-            if (existinEmployee != null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("This user is already an employee");
+                return View(model);
             }
+
+            // Does email already exist
+            var existingUser = await _dBContext.User.FirstOrDefaultAsync(u => u.Email == model.Email);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Email", "An account with this email already exists.");
+                return View(model);
+            }
+
+            // Hash password
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+            // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
+            var maxUsers = await _dBContext.User.MaxAsync(u => (int?)u.UserID) ?? 0;
+
+            var newUserID = maxUsers + 1;
+
+            // Create the new user
+            var user = new User
+            {
+                UserID = newUserID,
+                Email = model.Email,
+                Password = passwordHash,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                AccountActive = true
+            };
 
             // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
             var maxEmployees = await _dBContext.Employee.MaxAsync(e => (int?)e.EmployeeID) ?? 0;
@@ -129,14 +145,70 @@ namespace FaultSubsystem.Controllers
             var newEmployee = new Employee
             {
                 EmployeeID = newEmployeeID,
-                UserID = userID,
+                UserID = newUserID,
                 RoleID = 1
             };
 
+            try
+            {
+                _dBContext.User.Add(user);
+            }
+            catch
+            {
+                return View(model);
+            }
             _dBContext.Employee.Add(newEmployee);
             await _dBContext.SaveChangesAsync();
 
-            return RedirectToAction(nameof(ViewNonEmployeeUsers));
+            return RedirectToAction("ViewEmployees", "Employee");
         }
+
+        //public async Task<IActionResult> ViewNonEmployeeUsers(string searchString)
+        //{
+        //    var usersQuery = from u in _dBContext.User
+        //                     where !(from e in _dBContext.Employee select e.UserID).Contains(u.UserID)
+        //                     select u;
+
+        //    // search filter
+        //    if (!string.IsNullOrEmpty(searchString))
+        //    {
+        //        usersQuery = usersQuery.Where(u => u.FirstName.Contains(searchString) || u.LastName.Contains(searchString));
+        //    }
+
+        //    var users = await usersQuery.ToListAsync();
+
+        //    return View(users);
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> CreateEmployee(int userID)
+        //{
+        //    // check if user already exists, just in case
+        //    var existinEmployee = await _dBContext.Employee.FirstOrDefaultAsync(e => e.UserID == userID);
+        //    if (existinEmployee != null)
+        //    {
+        //        return BadRequest("This user is already an employee");
+        //    }
+
+        //    // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
+        //    var maxEmployees = await _dBContext.Employee.MaxAsync(e => (int?)e.EmployeeID) ?? 0;
+
+        //    var newEmployeeID = maxEmployees + 1;
+
+        //    // Create the new employee
+        //    var newEmployee = new Employee
+        //    {
+        //        EmployeeID = newEmployeeID,
+        //        UserID = userID,
+        //        RoleID = 1
+        //    };
+
+        //    _dBContext.Employee.Add(newEmployee);
+        //    await _dBContext.SaveChangesAsync();
+
+        //    return RedirectToAction(nameof(ViewNonEmployeeUsers));
+        //}
+
+
     }
 }

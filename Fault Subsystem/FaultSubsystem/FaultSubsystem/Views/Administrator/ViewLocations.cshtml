@@ -1,8 +1,12 @@
 ﻿@model IEnumerable<Location>
 
-<h2>Manage Locations</h2>
+<h2 style="margin: 5px;">Manage Locations</h2>
 
-<a class="btn btn-primary" asp-action="AddLocation">Add New Location</a>
+<a href="@Url.Action("Dashboard", "Administrator")" class="btn btn-secondary" style="margin: 5px;">
+    <img src="~/icons/arrow-left-square.svg" alt="Back" />
+</a>
+<br/>
+<a class="btn btn-primary" asp-action="AddLocation" style="margin: 5px;">Add New Location</a>
 
 <table class="table">
     <thead>

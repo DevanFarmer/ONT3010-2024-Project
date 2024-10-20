@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using FaultSubsystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using FaultSubsystem.Models.Account;
 
 namespace FaultSubsystem.Controllers
 {
@@ -23,7 +24,8 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel> 
             {
-                new TileModel {Title = "Manage Customers", Description = "Manage customer information and allocations.", Action = "ViewCustomers", Controller = "CustomerLiaison"}
+                new TileModel {Title = "Manage Customers", Description = "Manage customer information and allocations.", Action = "ViewCustomers", Controller = "CustomerLiaison"},
+                new TileModel {Title = "Create Customer", Description = "Add a new customer to the system.", Action = "CreateCustomer", Controller = "CustomerLiaison"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -73,6 +75,74 @@ namespace FaultSubsystem.Controllers
             }
 
             return View(await customers.ToListAsync());
+        }
+
+        public IActionResult CreateCustomer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCustomer(CreateAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Does email already exist
+            var existingUser = await _dBContext.User.FirstOrDefaultAsync(u => u.Email == model.Email);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Email", "An account with this email already exists.");
+                return View(model);
+            }
+
+            // Hash password
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+            // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
+            var maxUsers = await _dBContext.User.MaxAsync(u => (int?)u.UserID) ?? 0;
+
+            var newUserID = maxUsers + 1;
+
+            // Create the new user
+            var user = new User
+            {
+                UserID = newUserID,
+                Email = model.Email,
+                Password = passwordHash,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                AccountActive = true
+            };
+
+            // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
+            var maxCustomers = await _dBContext.Customer.MaxAsync(e => (int?)e.CustomerID) ?? 0;
+
+            var newCustomerID = maxCustomers + 1;
+
+            // Create the new employee
+            var newCustomer = new Customer
+            {
+                CustomerID = newCustomerID,
+                UserID = newUserID
+            };
+
+            try
+            {
+                _dBContext.User.Add(user);
+            }
+            catch
+            {
+                return View(model);
+            }
+            _dBContext.Customer.Add(newCustomer);
+            await _dBContext.SaveChangesAsync();
+
+            return RedirectToAction("Dashboard", "CustomerLiaison");
         }
 
         public async Task<IActionResult> EditCustomer(int? id)
