@@ -137,15 +137,20 @@ namespace FaultSubsystem.Controllers
         [HttpPost]
         public async Task<IActionResult> AddInventory(Inventory inventory)
         {
-            var maxInventory = await _dBContext.Inventory.MaxAsync(v => (int?)v.FridgeTypeID) ?? 0;
+            if (ModelState.IsValid)
+            {
+                var maxInventory = await _dBContext.Inventory.MaxAsync(v => (int?)v.FridgeTypeID) ?? 0;
 
-            var newInventoryID = maxInventory + 1;
+                var newInventoryID = maxInventory + 1;
 
-            inventory.FridgeTypeID = newInventoryID;
+                inventory.FridgeTypeID = newInventoryID;
 
-            _dBContext.Inventory.Add(inventory);
-            await _dBContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ViewInventory));
+                _dBContext.Inventory.Add(inventory);
+                await _dBContext.SaveChangesAsync();
+                return RedirectToAction(nameof(ViewInventory));
+            }
+
+            return RedirectToAction(nameof(AddInventory));
         }
 
         // Get Edit Inventory
@@ -171,9 +176,14 @@ namespace FaultSubsystem.Controllers
                 return NotFound();
             }
 
-            _dBContext.Update(inventory);
-            await _dBContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ViewInventory));
+            if (ModelState.IsValid)
+            {
+                _dBContext.Update(inventory);
+                await _dBContext.SaveChangesAsync();
+                return RedirectToAction(nameof(ViewInventory));
+            }
+
+            return RedirectToAction(nameof(EditInventory), id); // might be a error here
         }
         #endregion
     }

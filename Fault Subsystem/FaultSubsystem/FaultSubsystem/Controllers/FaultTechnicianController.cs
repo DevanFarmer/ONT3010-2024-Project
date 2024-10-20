@@ -134,14 +134,19 @@ namespace FaultSubsystem.Controllers
             }
 
             // Update the fault report with the new diagnosis and status
-            faultReport.Diagnosis = model.Diagnosis ?? "";
-            faultReport.FaultStatusID = model.FaultStatusID;
-            faultReport.ScheduledRepairDate = model.ScheduledRepairDate;
-            faultReport.Notes = model.Notes ?? "";
+            if (ModelState.IsValid)
+            {
+                faultReport.Diagnosis = model.Diagnosis ?? "";
+                faultReport.FaultStatusID = model.FaultStatusID;
+                faultReport.ScheduledRepairDate = model.ScheduledRepairDate;
+                faultReport.Notes = model.Notes ?? "";
 
-            await _dBContext.SaveChangesAsync();
+                await _dBContext.SaveChangesAsync();
 
-            return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
+                return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
+            }
+
+            return View(model);
         }
 
         public async Task<IActionResult> ViewFaultReportsHistory()
