@@ -1,18 +1,21 @@
-﻿@using System.Security.Claims;
-@* @{
-    ViewData["Title"] = "Home Page";
+﻿@{
+
+    ViewData["Title"] = "Role Selection";
+
+
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div> *@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Database Connection Test</title>
-</head>
-<body>
-    <h2>@ViewBag.Message</h2>
-</body>
-</html>
+<div class="jumbotron text-center">
+    <h1 class="display-4">Welcome to ChillTech Innovators</h1>
+    <p class="lead">Select your role to proceed</p>
+    <hr class="my-4">
+
+    <div class="row">
+        <div class="col-md-6">
+            <a class="btn btn-primary btn-lg" href="/Technician/TechnicianDashboard" role="button">Technician Portal</a>
+        </div>
+        <div class="col-md-6">
+            <a class="btn btn-secondary btn-lg" href="/Customer/CustomerDashboard" role="button">Customer Portal</a>
+        </div>
+    </div>
+</div>

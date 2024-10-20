@@ -4,23 +4,29 @@ namespace FaultSubsystem.Models.Account
 {
     public class CreateAccountViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "First Name is required")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "First Name must be between 3 and 100 characters")]
         public string FirstName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Last Name is required")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "Last Name must be between 3 and 100 characters")]
         public string LastName { get; set; }
 
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
 
-        [Required]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
+        [Required(ErrorMessage = "Password is required")]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required]
-        [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
+        [Required(ErrorMessage = "Please confirm your password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
+        [Required(ErrorMessage = "Phone number is required")]
+        [Phone(ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; }
     }
 }

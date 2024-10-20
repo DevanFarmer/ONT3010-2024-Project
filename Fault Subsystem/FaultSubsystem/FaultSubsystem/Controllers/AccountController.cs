@@ -81,64 +81,73 @@ namespace FaultSubsystem.Controllers
             {
                 var user = await _dBContext.User.FirstOrDefaultAsync(u => u.Email == model.Email);
 
-                // Successful Log in
-                if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
+                if (user == null)
                 {
-                    // Check the users role and load the proper dashboard
-                    // Check if user is customer
-                    var existingCustomer = await _dBContext.Customer.AnyAsync(c => c.UserID == user.UserID);
-                    if (existingCustomer)
-                    {
-                        // Set claim
-                        CreateClaim(user, "Customer");
+                    // Email not found
+                    ModelState.AddModelError(string.Empty, "The email address is not registered.");
+                    return View(model);
+                }
 
-                        return RedirectToAction("Dashboard", "Customer");
-                    }
-                    // ELSE
-                    // Check if user is employee
-                    var existingEmployee = await _dBContext.Employee.AnyAsync(e => e.UserID == user.UserID);
-                    if (existingEmployee)
-                    {
-                        // Check employee role
-                        var employeeRole = await (from employee in _dBContext.Employee
+                if (!BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
+                {
+                    // Password does not match
+                    ModelState.AddModelError(string.Empty, "The password is incorrect.");
+                    return View(model);
+                }
+
+                // Successful Log in
+                // Check the users role and load the proper dashboard
+                // Check if user is customer
+                var existingCustomer = await _dBContext.Customer.AnyAsync(c => c.UserID == user.UserID);
+                if (existingCustomer)
+                {
+                    // Set claim
+                    CreateClaim(user, "Customer");
+
+                    return RedirectToAction("Dashboard", "Customer");
+                }
+                // ELSE
+                // Check if user is employee
+                var existingEmployee = await _dBContext.Employee.AnyAsync(e => e.UserID == user.UserID);
+                if (existingEmployee)
+                {
+                    // Check employee role
+                    var employeeRole = await (from employee in _dBContext.Employee
                                               join role in _dBContext.Role
                                               on employee.RoleID equals role.RoleID
                                               where employee.UserID == user.UserID
                                               select new { RoleID = role.RoleID, RoleName = role.RoleName }).FirstOrDefaultAsync();
 
-                        if (employeeRole.RoleID == 1)
-                        {
-                            // Unassigned Role
-                            // employee is not fully assigned on system
-                            // redirect to appropriate Error View with ability to return to login screen
-                            return NotFound();
-                        }
-
-                        // Set claim
-                        CreateClaim(user, employeeRole.RoleName);
-
-                        // Set proper controller and action redirect variables
-                        string controllerName = $"{employeeRole.RoleName.Replace(" ", "")}";
-                        string actionName = "Dashboard";
-
-                        // Check if controller exists
-                        var controllerType = Type.GetType($"{GetType().Namespace}.{controllerName}Controller");
-                        if (controllerType == null)
-                        {
-                            // Redirect to the proper error view
-                            return NotFound();
-                        }
-
-                        // Redirect to the proper dashboard view
-                        return RedirectToAction(actionName, controllerName);
+                    if (employeeRole.RoleID == 1)
+                    {
+                        // Unassigned Role
+                        // employee is not fully assigned on system
+                        // redirect to appropriate Error View with ability to return to login screen
+                        return NotFound();
                     }
 
-                    //ELSE user is not fully registered on system
-                    // redirect to appropriate Error View with ability to return to login screen
-                    return NotFound();
+                    // Set claim
+                    CreateClaim(user, employeeRole.RoleName);
+
+                    // Set proper controller and action redirect variables
+                    string controllerName = $"{employeeRole.RoleName.Replace(" ", "")}";
+                    string actionName = "Dashboard";
+
+                    // Check if controller exists
+                    var controllerType = Type.GetType($"{GetType().Namespace}.{controllerName}Controller");
+                    if (controllerType == null)
+                    {
+                        // Redirect to the proper error view
+                        return NotFound();
+                    }
+
+                    // Redirect to the proper dashboard view
+                    return RedirectToAction(actionName, controllerName);
                 }
 
-                ModelState.AddModelError("", "Invalid email or password.");
+                //ELSE user is not fully registered on system
+                // redirect to appropriate Error View with ability to return to login screen
+                return NotFound();
             }
 
             return View(model);

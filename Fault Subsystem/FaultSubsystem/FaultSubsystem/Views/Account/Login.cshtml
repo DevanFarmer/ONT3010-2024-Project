@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 @{
     ViewData["Title"] = "Login";
-    Layout = "_Layout"; // Ensure the layout is set to your shared layout
+    Layout = "_Layout";
 }
 
 <div class="login-container">
@@ -13,14 +13,22 @@
         <div>
             <label>Email</label>
             <input type="email" asp-for="Email" required />
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         <div>
             <label>Password</label>
             <input type="password" asp-for="Password" required />
+            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
         <button type="submit">Log In</button>
-@*         <div style="padding-top: 10px">
+        <div style="padding-top: 10px">
             <a asp-controller="Account" asp-action="CreateAccount">Create an Account</a>
-        </div> *@
+        </div>
     </form>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
