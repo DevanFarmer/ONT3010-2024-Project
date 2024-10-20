@@ -153,6 +153,16 @@ namespace FaultSubsystem.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            // Sign out the user and clear the authentication cookies
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Redirect to the home page or login page after logout
+            return RedirectToAction("Login", "Account");
+        }
+
         public async void CreateClaim(User user, string role)
         {
             // Store a claim for accessing logged in user information in other views and controllers

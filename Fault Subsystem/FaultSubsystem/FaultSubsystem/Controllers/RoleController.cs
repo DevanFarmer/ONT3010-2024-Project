@@ -3,7 +3,6 @@ using FaultSubsystem.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
 using FaultSubsystem.Data;
-using FaultSubsystem.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace FaultSubsystem.Controllers
