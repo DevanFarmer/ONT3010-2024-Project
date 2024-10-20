@@ -4,15 +4,24 @@
     <div>
         <label>Fridge Model:</label>
         <input asp-for="FridgeModel" />
+        <span asp-validation-for="FridgeModel" class="text-danger"></span>
     </div>
     <div>
         <label>Quantity:</label>
-        <input asp-for="Quantity" />
+        <input asp-for="Quantity" type="number"/>
+        <span asp-validation-for="Quantity" class="text-danger"></span>
     </div>
     <div>
         <label>Supplier:</label>
         <select asp-for="SupplierID" asp-items="ViewBag.Suppliers"></select>
+        <span asp-validation-for="SupplierID" class="text-danger"></span>
     </div>
     <button type="submit">Add</button>
     <button asp-action="ViewInventory">Cancel</button>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
