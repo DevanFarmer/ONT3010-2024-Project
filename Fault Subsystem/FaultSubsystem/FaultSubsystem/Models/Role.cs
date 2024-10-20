@@ -6,7 +6,8 @@ namespace FaultSubsystem.Models
     {
         [Key]
         public int RoleID { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Role Name is required")]
+        [StringLength(55, MinimumLength = 3, ErrorMessage = "First Name must be between 3 and 55 characters")]
         public string RoleName { get; set; }
     }
 }
