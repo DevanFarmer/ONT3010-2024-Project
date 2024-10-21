@@ -1,27 +1,54 @@
 ﻿@model FaultSubsystem.Models.CustomerModels.FaultyFridgeDetailsViewModel
 
-<h2>Fridge Details</h2>
-
-<div>
-    <h4>Fridge Information</h4>
-    <p><strong>Fridge Model:</strong> @Model.FridgeModel</p>
-    <p><strong>Serial Number:</strong> @Model.SerialNumber</p>
-    <p><strong>Allocation Date:</strong> @Model.AllocationDate</p>
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Fault Details</strong>
+    </h2>
 </div>
 
-<div>
-    <h4>Location Information</h4>
-    <p><strong>Address Line 1:</strong> @Model.Addressline1</p>
-    <p><strong>Address Line 2:</strong> @Model.Addressline2</p>
-    <p><strong>City:</strong> @Model.City</p>
-    <p><strong>Postal Code:</strong> @Model.PostalCode</p>
-</div>
-
-<div>
-    <h4>Fault Information</h4>
-    <p><strong>Fault Description:</strong> @Model.FaultReport.FaultDescription</p>
-    <p><strong>Status:</strong> @Model.FaultReport.FaultStatus</p>
-    <p><strong>Return Date:</strong> @Model.ReturnDate</p>
-</div>
+<div class="container">
+    <div class="row d-flex align-items-stretch">
+        <div class="col-md-6 d-flex">
+            <div class="card mb-4 flex-fill">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><strong>Fridge Information</strong></h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Fridge Model: </strong>@Model.FridgeModel</p>
+                    <p><strong>Serial Number: </strong>@Model.SerialNumber</p>
+                    <p><strong>Allocation Date: </strong>@Model.AllocationDate</p>
+                    <p><strong>Return Date: </strong>@Model.ReturnDate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex">
+            <div class="card mb-4 flex-fill">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0"><strong>Location Information</strong></h4>
+                        
+                </div>
+                <div class="card-body">
+                    <p><strong>Address Line 1: </strong>@Model.Addressline1</p>
+                    <p><strong>Address Line 2: </strong>@Model.Addressline2</p>
+                    <p><strong>City: </strong>@Model.City</p>
+                    <p><strong>Postal Code: </strong>@Model.PostalCode</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex">
+            <div class="card mb-4 flex-fill">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><strong>Fault Information</strong></h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Fault Description: </strong>@Model.FaultReport.FaultDescription</p>
+                    <p><strong>Status: </strong>@Model.FaultReport.FaultStatus</p>
+                    <p><strong>Diagnosis: </strong>@Model.FaultReport.Diagnosis</p>
+                    <p><strong>Notes: </strong>@Model.FaultReport.Notes</p>
+                    <p><strong>Scheduled Repair Date: </strong>@Model.FaultReport.ScheduledRepairDate</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <a href="@Url.Action("ViewFaultyFridges", "Customer")" class="btn btn-secondary">Back to List</a>

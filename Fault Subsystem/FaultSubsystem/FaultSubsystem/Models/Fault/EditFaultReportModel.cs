@@ -19,6 +19,6 @@ namespace FaultSubsystem.Models.Fault
         [StringLength(255, MinimumLength = 3, ErrorMessage = "First Name must be between 3 and 255 characters")]
         public string? Notes { get; set; }
         
-        public List<FaultStatus> AvailableStatuses { get; set; } // Dropdown options
+        public List<FaultStatus>? AvailableStatuses { get; set; } // Dropdown options
     }
 }

@@ -13,12 +13,15 @@
 
         public string AllocationDate { get; set; }
         public string? ReturnDate { get; set; }
-        public FaultyFridgeDetailsFaultReportViewModel FaultReport { get; set; }
+        public FaultyFridgeFaultReportViewModel FaultReport { get; set; }
     }
 
-    public class FaultyFridgeDetailsFaultReportViewModel
+    public class FaultyFridgeFaultReportViewModel
     {
         public string FaultDescription { get; set; }
         public string FaultStatus { get; set; }
+        public string Diagnosis { get; set; }
+        public string ScheduledRepairDate { get; set; }
+        public string Notes { get; set; }
     }
 }

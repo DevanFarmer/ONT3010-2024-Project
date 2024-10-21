@@ -75,13 +75,16 @@
                 <span class="user-name">@surname, @name (@role)</span>
 
                 <!-- User initials, clickable -->
-                <div class="user-icon" onclick="toggleDropdown()">
-                    @initial
-                </div>
+@*                 <div class="user-icon">
+                   @initial
+                    
+                </div> *@
+
+
 
                 <!-- Exit icon with tooltip for logout -->
                 <form asp-action="Logout" asp-controller="Account" method="post" style="border: none; background: transparent; padding: 0; cursor: pointer;">
-                    <button type="submit" class="logout-icon" data-toggle="tooltip" title="Logout">
+                    <button type="submit" class="logout-icon" data-toggle="tooltip" title="Logout" style="border: none; background: transparent; padding: 0; cursor: pointer;">
                         <img src="~/icons/box-arrow-right.svg" alt="Logout" class="logout-icon-svg" />
                     </button>
                 </form>

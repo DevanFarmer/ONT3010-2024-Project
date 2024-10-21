@@ -86,14 +86,14 @@ namespace FaultSubsystem.Controllers
                 if (user == null)
                 {
                     // Email not found
-                    ModelState.AddModelError(string.Empty, "The email address is not registered.");
+                    ModelState.AddModelError("Email", "The email address is not registered.");
                     return View(model);
                 }
 
                 if (!BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
                     // Password does not match
-                    ModelState.AddModelError(string.Empty, "The password is incorrect.");
+                    ModelState.AddModelError("Password", "The password is incorrect.");
                     return View(model);
                 }
 

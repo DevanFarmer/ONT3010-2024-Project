@@ -21,8 +21,8 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "Inventory", Description = "View , Add and Edit Inventory.", Action = "ViewInventory", Controller = "InventoryLiaison"},
-                new TileModel {Title = "Suppliers", Description = "View, Add and Edit supplier information.", Action = "ViewSuppliers", Controller = "InventoryLiaison"}
+                new TileModel {Title = "Inventory", Description = "Manage Inventory.", Action = "ViewInventory", Controller = "InventoryLiaison"},
+                new TileModel {Title = "Suppliers", Description = "Manage Suppliers.", Action = "ViewSuppliers", Controller = "InventoryLiaison"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
@@ -183,7 +183,18 @@ namespace FaultSubsystem.Controllers
                 return RedirectToAction(nameof(ViewInventory));
             }
 
-            return RedirectToAction(nameof(EditInventory), id); // might be a error here
+            // Loop through the ModelState errors
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                foreach (var error in state.Errors)
+                {
+                    // Log or display the error message
+                    Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                }
+            }
+
+            return RedirectToAction(nameof(EditInventory), id);
         }
         #endregion
     }

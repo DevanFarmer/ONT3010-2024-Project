@@ -1,28 +1,54 @@
 ﻿@model IEnumerable<Inventory>
 
-@*Back button here*@
-<a asp-action="AddInventory">Add Inventory</a>
+@if (Model.Count() < 1)
+{
+    <div style="text-align: center;">
+        <h2 style="margin: 5px;">No Fridge Models found. Try adding Fridge Models.</h2>
+            <a href="@Url.Action("Dashboard", "InventoryLiaison")" class="btn btn-info">
+                <img src="~/icons/arrow-left-square.svg" alt="Back" />
+            </a>
+            <a href="@Url.Action("AddInventory", "InventoryLiaison")" class="btn btn-primary">
+                Add Fridge Model
+            </a>
+    </div>
+}
+else
+{
+    <a href="@Url.Action("Dashboard", "InventoryLiaison")" class="btn btn-info" style="margin: 5px;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
 
-<table>
-    <thead>
-        <tr>
-            <th>Fridge Model</th>
-            <th>Quantity</th>
-            <th>Supplier</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.FridgeModel</td>
-                <td>@item.Quantity</td>
-                <td>@item.Supplier.SupplierName</td>
-                <td>
-                    <a asp-action="EditInventory" asp-route-id="@item.FridgeTypeID">Edit</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Inventory</strong>
+        </h2>
+    </div>
+
+    <a asp-action="AddInventory" asp-controller="InventoryLiaison" class="btn btn-primary" style="margin: 5px;">Add Inventory</a>
+
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
+                <tr>
+                    <th>Fridge Model</th>
+                    <th>Quantity</th>
+                    <th>Supplier</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.FridgeModel</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Supplier.SupplierName</td>
+                        <td>
+                            <a asp-action="EditInventory" asp-controller="InventoryLiaison" asp-route-id="@item.FridgeTypeID" class="btn btn-primary">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

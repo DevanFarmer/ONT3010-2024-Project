@@ -1,45 +1,55 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.Role>
 
-<button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Dashboard", "Administrator")'">Back</button>
-<br />
-<button type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("CreateNewRole", "Role")'">Create New Role</button>
+<div class="mb-4" style="margin: 5px;">
+    <a href="@Url.Action("Dashboard", "Administrator")" class="btn btn-secondary" style="color: white;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+</div>
 
-<h2>All Roles</h2>
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Roles</strong>
+    </h2>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Role Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var role in Model)
-    {
-        <tr>
-            <td>
-                @if (ViewData["EditRoleId"] != null && (int)ViewData["EditRoleId"] == role.RoleID)
-                {
-                    <!-- Editing form for the role -->
-                    <form asp-action="UpdateRole" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="RoleID" value="@role.RoleID" />
-                        <input type="text" name="RoleName" value="@role.RoleName" class="form-control" />
+<button type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("CreateNewRole", "Role")'" style="margin: 5px;">Create New Role</button>
 
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <a href="@Url.Action("ViewRoles", "Role")" class="btn btn-secondary">Cancel</a>
-                    </form>
-                }
-                else
-                {
-                    <!-- Display role name and Edit button if not in edit mode -->
-                    @role.RoleName
-                <td>
-                    <a href="@Url.Action("EditRole", "Role", new { id = role.RoleID })" class="btn btn-primary">Edit</a>
-                </td>
-                }
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="view-table table-bordered table-striped table-hover">
+        <thead class="view-table-header">
+            <tr>
+                <th>Role Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+            <tbody>
+            @foreach (var role in Model)
+            {
+                <tr>
+                    <td>
+                        @if (ViewData["EditRoleId"] != null && (int)ViewData["EditRoleId"] == role.RoleID)
+                        {
+                            <!-- Editing form for the role -->
+                            <form asp-action="UpdateRole" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="RoleID" value="@role.RoleID" />
+                                <input type="text" name="RoleName" value="@role.RoleName" class="form-control" />
+
+                                <button type="submit" class="btn btn-success" style="margin: 5px;">Save</button>
+                                <a href="@Url.Action("ViewRoles", "Role")" class="btn btn-secondary" style="margin: 5px;">Cancel</a>
+                            </form>
+                        }
+                        else
+                        {
+                            <!-- Display role name and Edit button if not in edit mode -->
+                            @role.RoleName
+                            <td>
+                                <a href="@Url.Action("EditRole", "Role", new { id = role.RoleID })" class="btn btn-primary">Edit</a>
+                            </td>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

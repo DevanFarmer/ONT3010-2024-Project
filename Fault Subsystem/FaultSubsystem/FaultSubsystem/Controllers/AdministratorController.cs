@@ -21,10 +21,10 @@ namespace FaultSubsystem.Controllers
         {
             var tiles = new List<TileModel>
             {
-                new TileModel {Title = "Customers", Description = "Manage Customers", Action = "Dashboard", Controller = "CustomerLiaison"},
-                new TileModel {Title = "Employees", Description = "Manage Employees", Action = "Dashboard", Controller = "Employee"},
+                new TileModel {Title = "Customers", Description = "Manage Customers", Action = "ViewCustomers", Controller = "CustomerLiaison"},
+                new TileModel {Title = "Employees", Description = "Manage Employees", Action = "ViewEmployees", Controller = "Employee"},
                 new TileModel {Title = "Locations", Description = "Manage Locations", Action = "ViewLocations", Controller = "Administrator"},
-                new TileModel {Title = "Roles", Description = "View, Add and Edit roles.", Action = "ViewRoles", Controller = "Role"},
+                new TileModel {Title = "Roles", Description = "Manage Roles.", Action = "ViewRoles", Controller = "Role"},
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);

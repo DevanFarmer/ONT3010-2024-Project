@@ -73,7 +73,7 @@ namespace FaultSubsystem.Controllers
             await _dBContext.SaveChangesAsync();
 
             // Redirect back to the list of unassigned fault reports
-            return RedirectToAction(nameof(ViewUnassignedFaultyFridges));
+            return RedirectToAction(nameof(ViewAssignedFaultReports));
         }
 
         public async Task<IActionResult> ViewAssignedFaultReports()
@@ -145,6 +145,19 @@ namespace FaultSubsystem.Controllers
 
                 return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
             }
+
+            // Loop through the ModelState errors
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                foreach (var error in state.Errors)
+                {
+                    // Log or display the error message
+                    Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                }
+            }
+
+            model.AvailableStatuses = await _dBContext.FaultStatus.ToListAsync();
 
             return View(model);
         }

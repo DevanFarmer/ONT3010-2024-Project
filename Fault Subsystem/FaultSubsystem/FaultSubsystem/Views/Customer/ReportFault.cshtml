@@ -1,21 +1,25 @@
 ﻿@model FaultSubsystem.Models.CustomerModels.FaultReportViewModel
 
-<h2>Report a Fault for Your Fridge</h2>
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Report a Fault for Your Fridge</h2>
 
-<form asp-action="ReportFault" method="post">
-    @Html.AntiForgeryToken()
+        <form asp-action="ReportFault" method="post" class="custom-form">
+            @Html.AntiForgeryToken()
 
-    <input type="hidden" asp-for="AllocationID" />
+            <input type="hidden" asp-for="AllocationID" />
 
-    <div class="form-group">
-        <label asp-for="FaultDescription">Fault Description</label>
-        <textarea asp-for="FaultDescription" class="form-control"></textarea>
-        <span asp-validation-for="FaultDescription" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="FaultDescription">Fault Description:</label>
+                <textarea asp-for="FaultDescription" class="form-control"></textarea>
+                <span asp-validation-for="FaultDescription" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Fault Report</button>
+            <a asp-action="ViewFridges" class="btn btn-secondary">Cancel</a>
+        </form>
     </div>
-
-    <button type="submit" class="btn btn-primary">Submit Fault Report</button>
-    <a asp-action="ViewFridges" class="btn btn-secondary">Cancel</a>
-</form>
+</div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

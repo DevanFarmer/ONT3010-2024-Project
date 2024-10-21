@@ -1,41 +1,71 @@
-﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.CustomerViewModel>
+﻿@using System.Security.Claims;
+@model IEnumerable<FaultSubsystem.Models.CustomerModels.CustomerViewModel>
 
-@*Back button here*@
+<!-- Back Button -->
+<div class="mb-4" style="margin: 5px;">
+    <a href="@Url.Action("Dashboard", @User.FindFirstValue(ClaimTypes.Role).Replace(" ", ""))" class="btn btn-secondary" style="color: white;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+</div>
 
-<h2>Customers</h2>
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Customers</strong>
+    </h2>
+</div>
 
-<form method="get">
-    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Search by Name..." />
-    <input type="submit" value="Search" />
+<!-- Search Form -->
+<form id="searchForm" method="get" class="form-inline mb-4 d-flex justify-content-center">
+    <input id="searchInput" type="text" name="searchString" value="@ViewData["CurrentFilter"]"
+           class="form-control mr-2" placeholder="Search by Name..." style="width: 300px; margin-right: 5px;" />
+    <input type="submit" value="Search" class="btn btn-primary"/>
+    <button type="button" class="btn btn-secondary ml-2" onclick="clearSearch()" style="margin-left: 5px;">Clear</button>
 </form>
+<br/>
+<button type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("CreateCustomer", "CustomerLiaison")'" style="margin: 5px;">Create New Customer</button>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="ViewCustomers" asp-route-sortOrder="@ViewBag.FirstNameSortParm">First Name</a>
-            </th>
-            <th>
-                <a asp-action="ViewCustomers" asp-route-sortOrder="@ViewBag.LastNameSortParm">Last Name</a>
-            </th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var customer in Model)
-        {
+<!-- Customers List -->
+<div class="table-responsive">
+    <table class="view-table table-bordered table-striped table-hover">
+        <thead class="view-table-header">
             <tr>
-                <td>@customer.FirstName</td>
-                <td>@customer.LastName</td>
-                <td>@customer.Email</td>
-                <td>@customer.PhoneNumber</td>
-                <td>
-                    <a asp-action="EditCustomer" asp-route-id="@customer.CustomerID" class="btn btn-primary">Edit Information</a>
-                    <a href="@Url.Action("ViewCustomerAllocations", "CustomerLiaison", new { customerId = customer.CustomerID})" class="btn btn-primary">Manage Allocations</a>
-                </td>
+                <th>
+                    <a asp-action="ViewCustomers" asp-route-sortOrder="@ViewBag.FirstNameSortParm" class="text-white">
+                        First Name
+                    </a>
+                </th>
+                <th >
+                    <a asp-action="ViewCustomers" asp-route-sortOrder="@ViewBag.LastNameSortParm" class="text-white">
+                        Last Name
+                    </a>
+                </th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.FirstName</td>
+                    <td>@customer.LastName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.PhoneNumber</td>
+                    <td>
+                        <a asp-action="EditCustomer" asp-route-id="@customer.CustomerID" class="btn btn-secondary btn-sm">Edit Information</a>
+                        <a href="@Url.Action("ViewCustomerAllocations", "CustomerLiaison", new { customerId = customer.CustomerID})" class="btn btn-primary btn-sm">Manage Allocations</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function clearSearch() {
+        // Clear the search input and submit the form
+        document.getElementById("searchInput").value = '';
+        document.getElementById("searchForm").submit();
+    }
+</script>

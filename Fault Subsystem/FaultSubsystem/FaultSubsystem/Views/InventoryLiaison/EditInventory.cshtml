@@ -1,25 +1,30 @@
 ﻿@model Inventory
 
-<form asp-action="EditInventory" method="post">
-    <input type="hidden" asp-for="FridgeTypeID" />
-    <div>
-        <label>Fridge Model:</label>
-        <input asp-for="FridgeModel" />
-        <span asp-validation-for="FridgeModel" class="text-danger"></span>
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Edit Inventory Record</h2>
+        <form asp-action="EditInventory" method="post" class="custom-form">
+            <input type="hidden" asp-for="FridgeTypeID" />
+            <div class="form-group">
+                <label>Fridge Model:</label>
+                <input asp-for="FridgeModel" />
+                <span asp-validation-for="FridgeModel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Quantity:</label>
+                <input asp-for="Quantity" type="number"/>
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Supplier:</label>
+                <select asp-for="SupplierID" asp-items="ViewBag.Suppliers"></select>
+                <span asp-validation-for="SupplierID" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button asp-action="ViewInventory" class="btn btn-secondary">Cancel</button>
+        </form>
     </div>
-    <div>
-        <label>Quantity:</label>
-        <input asp-for="Quantity" type="number"/>
-        <span asp-validation-for="Quantity" class="text-danger"></span>
-    </div>
-    <div>
-        <label>Supplier:</label>
-        <select asp-for="SupplierID" asp-items="ViewBag.Suppliers"></select>
-        <span asp-validation-for="SupplierID" class="text-danger"></span>
-    </div>
-    <button type="submit">Save</button>
-    <button asp-action="ViewInventory">Cancel</button>
-</form>
+</div>
 
 @section Scripts {
     @{

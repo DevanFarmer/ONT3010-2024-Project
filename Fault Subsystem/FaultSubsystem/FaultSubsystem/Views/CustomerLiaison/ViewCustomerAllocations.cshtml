@@ -1,28 +1,52 @@
 ﻿@model FaultSubsystem.Models.CustomerLiaison.CustomerAllocationsViewModel
 
-<h2>Fridge Allocations for @Model.FirstName @Model.LastName</h2>
+<div class="mb-4" style="margin: 5px;">
+    <a href="@Url.Action("ViewCustomers")" class="btn btn-secondary" style="color: white;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Fridge Model</th>
-            <th>Serial Number</th>
-            <th>Allocation Date</th>
-            <th>Return Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var allocation in Model.Allocations)
-        {
-            <tr>
-                <td>@allocation.FridgeModel</td>
-                <td>@allocation.SerialNumber</td>
-                <td>@allocation.AllocationDate</td>
-                <td>@allocation.ReturnDate</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        Fridge Allocations for <strong>@Model.FirstName @Model.LastName</strong>
+    </h2>
+</div>
 
-<a href="@Url.Action("AddFridgeAllocation", new { customerId = Model.CustomerID })" class="btn btn-primary">Add New Allocation</a>
-<a href="@Url.Action("ViewCustomers")" class="btn btn-primary">Back</a>
+@if (Model.Allocations.Count() > 0)
+{
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
+                <tr>
+                    <th>Fridge Model</th>
+                    <th>Serial Number</th>
+                    <th>Allocation Date</th>
+                    <th>Return Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var allocation in Model.Allocations)
+                {
+                    <tr>
+                        <td>@allocation.FridgeModel</td>
+                        <td>@allocation.SerialNumber</td>
+                        <td>@allocation.AllocationDate</td>
+                        <td>@allocation.ReturnDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <h3 class="mb-4 text-center">
+        Customer <strong>@Model.FirstName @Model.LastName</strong> has no allocations.
+    </h3>
+}
+
+<div class="title-parent">
+    <a href="@Url.Action("AddFridgeAllocation", new { customerId = Model.CustomerID })" class="btn btn-primary" style="margin: 5px;">
+        <strong>Add New Allocation</strong>
+    </a>
+</div>

@@ -1,42 +1,55 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.FaultyFridgesViewModel>
 
-@*Back button here*@
-<br/>
 
-@if (Model.Count() > 0)
+@if (Model.Count() > 1)
 {
-    <h2>Faulty Fridges</h2>
+    <a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary" style="margin: 5px;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Your Faulty Fridges</strong>
+        </h2>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Fridge Model</th>
-                <th>Serial Number</th>
-                <th>Fault Description</th>
-                <th>Current Fault Status</th>
-                <th>Return Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var fridge in Model)
-            {
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
                 <tr>
-                    <td>@fridge.FridgeModel</td>
-                    <td>@fridge.SerialNumber</td>
-                    <td>@fridge.FaultDescription</td>
-                    <td>@fridge.FaultStatus</td>
-                    <td>@fridge.ReturnDate</td>
-                    <td>
-                        <a href="@Url.Action("ViewFaultyFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID })" class="btn btn-info">View Details</a>
-                        @* Have a button to request a replacement for the fridge here? *@
-                    </td>
+                    <th>Fridge Model</th>
+                    <th>Serial Number</th>
+                    <th>Fault Description</th>
+                    <th>Current Fault Status</th>
+                    <th>Return Date</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var fridge in Model)
+                {
+                    <tr>
+                        <td>@fridge.FridgeModel</td>
+                        <td>@fridge.SerialNumber</td>
+                        <td>@fridge.FaultDescription</td>
+                        <td>@fridge.FaultStatus</td>
+                        <td>@fridge.ReturnDate</td>
+                        <td>
+                            <a href="@Url.Action("ViewFaultyFridgeDetails", "Customer", new { faultID = fridge.FaultID})" class="btn btn-info">View Details</a>
+                            @* Have a button to request a replacement for the fridge here? *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
-    <h2>You don't have any faulty fridges.</h2>
+    <div style="text-align: center;">
+        <h2><strong>You don't have any faulty fridges.</strong></h2>
+        <br />
+        <a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary" style="margin: 5px;">
+            <img src="~/icons/arrow-left-square.svg" alt="Back" />
+        </a>
+    </div>
 }

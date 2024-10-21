@@ -1,47 +1,79 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.CustomerModels.AllocatedFridgesViewModel>
 
-<a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary">Back</a>
-<br/>
-<h2>Your Fridges</h2>
+@if (Model.Count() < 1)
+{
+    <div style="text-align: center;">
+        <h2><strong>No Fridges to View</strong></h2>
+        <br/>
+        <h3>Contact customer liaison to allocated a fridge.</h3>
+        <br />
+        <h4><strong>Contact:</strong> 073-181-3983</h4>
+        <br />
+        <h5>If you have any faulty fridges, you can view them here:
+            <a href="@Url.Action("ViewFaultyFridges", "Customer")" class="btn btn-primary" style="margin: 5px;">
+                View Faulty Fridges
+            </a>
+        </h5>
 
-<table>
-    <thead>
-        <tr>
-            <th>Fridge Model</th>
-            <th>Serial Number</th>
-            <th>Location</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Any())
-        {
-            foreach (var fridge in Model)
-            {
+        <br/>
+        <a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary" style="margin: 5px;">
+            <img src="~/icons/arrow-left-square.svg" alt="Back" />
+        </a>
+    </div>
+}
+else
+{
+    <a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary" style="margin: 5px;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Your Fridges</strong>
+        </h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
                 <tr>
-                    <td>@fridge.FridgeModel</td>
-                    <td>@fridge.SerialNumber</td>
-                    <td>
-                        <strong>Address Line 1:</strong> @fridge.Addressline1 <br />
-                        @if (@fridge.Addressline2 != null) 
-                        {
-                            <strong>Address Line 2:</strong> @fridge.Addressline2 <br />
-                        }
-                        <strong>City:</strong> @fridge.City <br />
-                        <strong>Postal Code:</strong> @fridge.PostalCode <br />
-                    </td>
-                    <td>
-                        <a href="@Url.Action("AllocatedFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID})" class="btn btn-info">View Details</a>
-                        <a href="@Url.Action("ReportFault", "Customer", new { allocationID = fridge.AllocationID })" class="btn btn-danger">Report Fault</a>
-                    </td>
+                    <th>Fridge Model</th>
+                    <th>Serial Number</th>
+                    <th>Location</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4">You have no fridges allocated to you. Please contact customer support.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var fridge in Model)
+                    {
+                        <tr>
+                            <td>@fridge.FridgeModel</td>
+                            <td>@fridge.SerialNumber</td>
+                            <td>
+                                <strong>Address Line 1:</strong> @fridge.Addressline1 <br />
+                                @if (@fridge.Addressline2 != null)
+                                {
+                                    <strong>Address Line 2:</strong> @fridge.Addressline2 <br />
+                                }
+                                <strong>City:</strong> @fridge.City <br />
+                                <strong>Postal Code:</strong> @fridge.PostalCode <br />
+                            </td>
+                            <td>
+                                <a href="@Url.Action("AllocatedFridgeDetails", "Customer", new { fridgeID = fridge.FridgeID})" class="btn btn-info">View Details</a>
+                                <a href="@Url.Action("ReportFault", "Customer", new { allocationID = fridge.AllocationID })" class="btn btn-danger">Report Fault</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4">You have no fridges allocated to you. Please contact customer support.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

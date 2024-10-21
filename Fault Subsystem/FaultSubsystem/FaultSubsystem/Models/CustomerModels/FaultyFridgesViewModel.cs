@@ -6,7 +6,7 @@
         public string FridgeModel { get; set; }
         public string SerialNumber { get; set; }
 
-        //public int AllocationID { get; set; }
+        public int FaultID { get; set; }
 
         public string FaultDescription { get; set; }
         public string FaultStatus { get; set; }

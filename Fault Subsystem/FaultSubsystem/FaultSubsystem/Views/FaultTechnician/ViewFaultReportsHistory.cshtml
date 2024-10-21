@@ -1,37 +1,59 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.Fault.FaultReportTechnicianViewModel>
+@if (Model.Count() < 1)
+{
+    <div style="text-align: center;">
+        <h2 style="margin: 5px;">You have no previously resolved fault reports.</h2>
+        <a href="@Url.Action("Dashboard", "FaultTechnician")" class="btn btn-secondary" style="margin: 5px;">
+            <img src="~/icons/arrow-left-square.svg" alt="Back" />
+            <a href="@Url.Action("ViewUnassignedFaultyFridges")" class="btn btn-info">
+                View Unassigned Fault Reports
+            </a>
+        </a>
+    </div>
+}
+else
+{
+    <a href="@Url.Action("Dashboard", "FaultTechnician")" class="btn btn-secondary" style="margin: 5px;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+    <br/>
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Your Fault Report History</strong>
+        </h2>
+    </div>
 
-@*Back button here*@
-
-<h2>Your Assigned Fault Reports</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Description</th>
-            <th>Report Date</th>
-            <th>Status</th>
-            <th>Assigned Date</th>
-            <th>Scheduled Repair Date</th>
-            <th>Diagnosis</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var fault in Model)
-        {
-            <tr>
-                <td>@fault.FaultDescription</td>
-                <td>@fault.ReportDate</td>
-                <td>@fault.FaultStatus</td>
-                <td>@fault.AssignedDate</td>
-                <td>@fault.ScheduledRepairDate</td>
-                <td>@fault.Diagnosis</td>
-                <td>
-                    <a href="@Url.Action("FaultReportDetails", new { faultID = fault.FaultID })" class="btn btn-primary">
-                        View Details
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
+                <tr>
+                    <th>Description</th>
+                    <th>Report Date</th>
+                    <th>Status</th>
+                    <th>Assigned Date</th>
+                    <th>Scheduled Repair Date</th>
+                    <th>Diagnosis</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fault in Model)
+                {
+                    <tr>
+                        <td>@fault.FaultDescription</td>
+                        <td>@fault.ReportDate</td>
+                        <td>@fault.FaultStatus</td>
+                        <td>@fault.AssignedDate</td>
+                        <td>@fault.ScheduledRepairDate</td>
+                        <td>@fault.Diagnosis</td>
+                        <td>
+                            <a href="@Url.Action("FaultReportDetails", new { faultID = fault.FaultID })" class="btn btn-primary">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

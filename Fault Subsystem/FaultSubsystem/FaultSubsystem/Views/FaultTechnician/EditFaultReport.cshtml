@@ -1,38 +1,49 @@
 ﻿@model FaultSubsystem.Models.Fault.EditFaultReportModel
 
-<h2>Edit Fault Report</h2>
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Edit Fault Report</h2>
 
-<form asp-action="EditFaultReport" method="post">
-    <input type="hidden" asp-for="FaultID" />
+        <form asp-action="EditFaultReport" method="post" class="custom-form">
 
-    <div class="form-group">
-        <label asp-for="Diagnosis">Diagnosis</label>
-        <textarea class="form-control" asp-for="Diagnosis"></textarea>
-        <span asp-validation-for="Diagnosis" class="text-danger"></span>
+            @if (Model.AvailableStatuses != null && Model.AvailableStatuses.Any())
+            {
+                <input type="hidden" asp-for="FaultID" />
+
+                <div class="form-group">
+                    <label asp-for="Diagnosis"><strong>Diagnosis</strong></label>
+                    <textarea class="form-control" asp-for="Diagnosis"></textarea>
+                    <span asp-validation-for="Diagnosis" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Notes"><strong>Notes</strong></label>
+                    <textarea class="form-control" asp-for="Notes"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ScheduledRepairDate"><strong>Schedule Repair Date</strong></label>
+                    <input asp-for="ScheduledRepairDate" class="form-control" type="date" />
+                    <span asp-validation-for="ScheduledRepairDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FaultStatusID"><strong>Fault Status</strong></label>
+                    <select class="form-control" asp-for="FaultStatusID" asp-items="@(new SelectList(Model.AvailableStatuses, "FaultStatusID", "StatusName"))"></select>
+                    <span asp-validation-for="FaultStatusID" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            }
+            else
+            {
+                <p>No statuses available, retry reloading the page.</p>
+            }
+
+            <a asp-action="ViewAssignedFaultReports" asp-controller="FaultTechnician" class="btn btn-secondary">Cancel</a>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Notes">Notes</label>
-        <textarea class="form-control" asp-for="Notes"></textarea>
-        <span asp-validation-for="Notes" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ScheduledRepairDate">Schedule Repair Date</label>
-        <input asp-for="ScheduledRepairDate" class="form-control" type="date" />
-        <span asp-validation-for="ScheduledRepairDate" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="FaultStatusID">Fault Status</label>
-        <select class="form-control" asp-for="FaultStatusID" asp-items="@(new SelectList(Model.AvailableStatuses, "FaultStatusID", "StatusName"))"></select>
-        <span asp-validation-for="FaultStatusID" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="ViewAssignedFaultReports" class="btn btn-secondary">Cancel</a>
-</form>
-
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

@@ -1,43 +1,57 @@
 ﻿@model IEnumerable<FaultSubsystem.Models.EmployeeModels.UnassignedFaultReportViewModel>
 
-@*Back button here*@
 
 @if (Model.Count() < 1)
 {
-    <h2>No unassigned Fault Reports at the moment</h2>
+    <div style="text-align: center;">
+        <h2 style="margin: 5px;">No unassigned Fault Reports at the moment</h2>
+            <a href="@Url.Action("Dashboard", "FaultTechnician")" class="btn btn-info">
+                <img src="~/icons/arrow-left-square.svg" alt="Back" />
+            </a>
+    </div>
 }
 else
 {
-    <h2>Unassigned Fault Reports</h2>
+    <a href="@Url.Action("Dashboard", "FaultTechnician")" class="btn btn-secondary" style="margin: 5px;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Fridge Model</th>
-                <th>Serial Number</th>
-                <th>Fault Description</th>
-                <th>Fault Status</th>
-                <th>Allocation Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var report in Model)
-            {
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Unassigned Fault Reports</strong>
+        </h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
                 <tr>
-                    <td>@report.FridgeModel</td>
-                    <td>@report.SerialNumber</td>
-                    <td>@report.FaultDescription</td>
-                    <td>@report.FaultStatus</td>
-                    <td>@report.AllocationDate</td>
-                    <td>
-                        <form method="post" action="@Url.Action("AssignFaultReport", "FaultTechnician")">
-                            <input type="hidden" name="faultID" value="@report.FaultID" />
-                            <button type="submit" class="btn btn-primary">Assign to Me</button>
-                        </form>
-                    </td>
+                    <th>Fridge Model</th>
+                    <th>Serial Number</th>
+                    <th>Fault Description</th>
+                    <th>Fault Status</th>
+                    <th>Allocation Date</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>    
+            </thead>
+            <tbody>
+                @foreach (var report in Model)
+                {
+                    <tr>
+                        <td>@report.FridgeModel</td>
+                        <td>@report.SerialNumber</td>
+                        <td>@report.FaultDescription</td>
+                        <td>@report.FaultStatus</td>
+                        <td>@report.AllocationDate</td>
+                        <td>
+                            <form method="post" action="@Url.Action("AssignFaultReport", "FaultTechnician")">
+                                <input type="hidden" name="faultID" value="@report.FaultID" />
+                                <button type="submit" class="btn btn-primary">Assign to Me</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>    
+    </div>
 }

@@ -14,10 +14,10 @@ namespace FaultSubsystem.Models
         public string FridgeModel { get; set; }
 
         [Required(ErrorMessage = "A quantity is required.")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a valid integer. Quantity cannot be lower than 0")]
+        [Range(0, 1000, ErrorMessage = "Please enter a valid integer. Quantity cannot be lower than 0")]
         public int Quantity { get; set; }
 
-        public Supplier Supplier { get; set; }
-        public ICollection<Fridge> Fridge { get; set; }
+        public Supplier? Supplier { get; set; }
+        public ICollection<Fridge>? Fridge { get; set; }
     }
 }

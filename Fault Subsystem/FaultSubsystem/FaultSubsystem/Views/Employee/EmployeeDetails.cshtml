@@ -4,42 +4,52 @@
 *@
 @model FaultSubsystem.Models.EmployeeModels.EmployeeViewDetailsModel
 
-<a href="@Url.Action("ViewEmployees", "Employee")" class="btn btn-secondary">Back to List</a>
-
-<h2>Employee Details</h2>
-
-<div>
-    <label>First Name:</label>
-    <p>@Model.FirstName</p>
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Employee Details</strong>
+    </h2>
 </div>
-<div>
-    <label>Last Name:</label>
-    <p>@Model.LastName</p>
+<div class="container">
+    <div class="row d-flex align-items-stretch">
+        <!-- Employee Information -->
+        <div class="col-md-6 d-flex">
+            <div class="card mb-4 flex-fill">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><strong>Information</strong></h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>First Name: </strong> @Model.FirstName</p>
+                    <p><strong>Last Name: </strong>@Model.LastName</p>
+                    <p><strong>Email: </strong>@Model.Email</p>
+                    <p><strong>Phone Number: </strong>@Model.PhoneNumber</p>
+                    <p><strong>Role: </strong>@Model.RoleName</p>
+                </div>
+            </div>
+        </div>
+
+    <div class="col-md-6 d-flex">
+        <div class="card mb-4 flex-fill">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0"><strong>Assign Role</strong></h4>
+            </div>
+            <div class="card-body">
+                <div class="card-body">
+                    <form asp-action="AssignRole" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" asp-for="EmployeeID" />
+
+                        <div class="form-group">
+                            <label for="RoleID"><strong>Select Role:</strong></label>
+                            <select asp-for="RoleID" asp-items="ViewBag.RoleList" class="form-control"></select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Assign Role</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 </div>
-<div>
-    <label>Email:</label>
-    <p>@Model.Email</p>
+
+    <a href="@Url.Action("ViewEmployees", "Employee")" class="btn btn-secondary">Back to List</a>
 </div>
-<div>
-    <label>Phone Number:</label>
-    <p>@Model.PhoneNumber</p>
-</div>
-<div>
-    <label>Role:</label>
-    <p>@Model.RoleName</p>
-</div>
-
-<h4>Assign Role</h4>
-
-<form asp-action="AssignRole" method="post">
-    @Html.AntiForgeryToken()
-
-    <input type="hidden" asp-for="EmployeeID" />
-
-    <div class="form-group">
-        <label for="RoleID">Select Role</label>
-        <select asp-for="RoleID" asp-items="ViewBag.RoleList" class="form-control"></select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Assign Role</button>
-</form>

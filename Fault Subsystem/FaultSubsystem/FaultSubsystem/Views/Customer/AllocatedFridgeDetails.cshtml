@@ -1,9 +1,9 @@
-﻿@model FaultSubsystem.Models.CustomerModels.AllocatedFridgeDetailsViewModel
+﻿@* @model FaultSubsystem.Models.CustomerModels.AllocatedFridgeDetailsViewModel
 
-<h2>Fridge Details</h2>
+<h2><strong>Fridge Details</strong></h2>
 
 <div>
-    <h4>Fridge Information</h4>
+    <h4><strong>Fridge Information</strong></h4>
     <p><strong>Fridge Model:</strong> @Model.FridgeModel</p>
     <p><strong>Serial Number:</strong> @Model.SerialNumber</p>
     <p><strong>Allocation Date:</strong> @Model.AllocationDate</p>
@@ -14,11 +14,63 @@
 </div>
 
 <div>
-    <h4>Location Information</h4>
+    <h4><strong>Location Information</strong></h4>
     <p><strong>Address Line 1:</strong> @Model.Addressline1</p>
     <p><strong>Address Line 2:</strong> @Model.Addressline2</p>
     <p><strong>City:</strong> @Model.City</p>
     <p><strong>Postal Code:</strong> @Model.PostalCode</p>
 </div>
 
-<a href="@Url.Action("ViewFridges", "Customer")" class="btn btn-secondary">Back to List</a>
+<a href="@Url.Action("ViewFridges", "Customer")" class="btn btn-secondary">Back to List</a> *@
+@model FaultSubsystem.Models.CustomerModels.AllocatedFridgeDetailsViewModel
+
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Fridge Details</strong>
+    </h2>
+</div>
+
+<div class="container">
+    <div class="row d-flex align-items-stretch">
+        <!-- Fridge Information -->
+        <div class="col-md-6 d-flex">
+            <div class="card mb-4 flex-fill">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><strong>Fridge Information</strong></h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Fridge Model:</strong> @Model.FridgeModel</p>
+                    <p><strong>Serial Number:</strong> @Model.SerialNumber</p>
+                    <p><strong>Allocation Date:</strong> @Model.AllocationDate</p>
+                    @if (Model.ReturnDate == "Not Returned")
+                    {
+                        <p><strong>Return Date:</strong> @(Model.ReturnDate)</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Information -->
+        <div class="col-md-6 d-flex">
+            <div class="card mb-4 flex-fill">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0"><strong>Location Information</strong></h4>
+                </div>
+                <div class="card-body">
+                <div class="card-body">
+                    <p><strong>Address Line 1:</strong> @Model.Addressline1</p>
+                    <p><strong>Address Line 2:</strong> @Model.Addressline2</p>
+                    <p><strong>City:</strong> @Model.City</p>
+                    <p><strong>Postal Code:</strong> @Model.PostalCode</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center">
+        <a href="@Url.Action("ViewFridges", "Customer")" class="btn btn-secondary" style="color: white;">
+                <strong>Back to List</strong>
+        </a>
+    </div>
+</div>

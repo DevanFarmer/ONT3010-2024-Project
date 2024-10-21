@@ -1,33 +1,69 @@
 ﻿@model IEnumerable<Supplier>
 
-<a asp-action="Dashboard" asp-controller="InventoryLiaison" class="btn btn-secondary">Back</a>
-<a asp-action="AddSupplier" class="btn btn-success">Add New Supplier</a>
+@if (Model.Count() < 1)
+{
+    <div style="text-align: center;">
+        <h2 style="margin: 5px;">No Fridge Suppliers found. Try adding Suppliers.</h2>
+            <a href="@Url.Action("Dashboard", "InventoryLiaison")" class="btn btn-info">
+                <img src="~/icons/arrow-left-square.svg" alt="Back" />
+            </a>
+            <a href="@Url.Action("AddSupplier", "InventoryLiaison")" class="btn btn-primary">
+                Add Fridge Supplier
+            </a>
+    </div>
+}
+else
+{
+    <a href="@Url.Action("Dashboard", "InventoryLiaison")" class="btn btn-info" style="margin: 5px;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
 
-<h2>Suppliers</h2>
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Suppliers</strong>
+        </h2>
+    </div>
 
-<form method="get" action="@Url.Action("ViewSuppliers", "InventoryLiaison")">
-    <input type="text" name="searchString" placeholder="Search by supplier name" value="@ViewData["CurrentFilter"]" />
-    <input type="submit" value="Search" />
-</form>
+    <form id="searchForm" method="get" action="@Url.Action("ViewSuppliers", "InventoryLiaison")" class="form-inline mb-4 d-flex justify-content-center">
+        <input id="searchInput" type="text" name="searchString" value="@ViewData["CurrentFilter"]"
+            class="form-control mr-2" placeholder="Search by Supplier Name..." style="width: 300px; margin-right: 5px;" />
+        <input type="submit" value="Search" class="btn btn-primary" />
+        <button type="button" class="btn btn-secondary ml-2" onclick="clearSearch()" style="margin-left: 5px;">Clear</button>
+    </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th><a asp-action="ViewSuppliers" asp-route-sortOrder="@ViewData["SupplierNameSortParm"]">Supplier Name</a></th>
-            <th>Phone Number</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var supplier in Model)
-        {
-            <tr>
-                <td>@supplier.SupplierName</td>
-                <td>@supplier.SupplierPhoneNumber</td>
-                <td>
-                    <a asp-action="EditSupplier" asp-route-id="@supplier.SupplierID" class="btn btn-primary">Edit</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <a href="@Url.Action("AddSupplier", "InventoryLiaison")" class="btn btn-primary" style="margin: 5px;">
+        Add Fridge Supplier
+    </a>
+
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
+                <tr>
+                    <th><a asp-action="ViewSuppliers" asp-route-sortOrder="@ViewData["SupplierNameSortParm"]">Supplier Name</a></th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var supplier in Model)
+                {
+                    <tr>
+                        <td>@supplier.SupplierName</td>
+                        <td>@supplier.SupplierPhoneNumber</td>
+                        <td>
+                            <a asp-action="EditSupplier" asp-route-id="@supplier.SupplierID" class="btn btn-primary">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script>
+    function clearSearch() {
+        // Clear the search input and submit the form
+        document.getElementById("searchInput").value = '';
+        document.getElementById("searchForm").submit();
+    }
+</script>

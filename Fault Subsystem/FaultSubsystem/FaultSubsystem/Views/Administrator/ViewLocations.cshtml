@@ -1,35 +1,42 @@
 ﻿@model IEnumerable<Location>
 
-<h2 style="margin: 5px;">Manage Locations</h2>
-
 <a href="@Url.Action("Dashboard", "Administrator")" class="btn btn-secondary" style="margin: 5px;">
     <img src="~/icons/arrow-left-square.svg" alt="Back" />
 </a>
-<br/>
+
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Locations</strong>
+    </h2>
+</div>
+
 <a class="btn btn-primary" asp-action="AddLocation" style="margin: 5px;">Add New Location</a>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Address Line 1</th>
-            <th>Address Line 2</th>
-            <th>City</th>
-            <th>Postal Code</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var location in Model)
-        {
+<div class="table-responsive">
+    <table class="view-table table-bordered table-striped table-hover">
+        <thead class="view-table-header">
             <tr>
-                <td>@location.AddressLine1</td>
-                <td>@location.AddressLine2</td>
-                <td>@location.City</td>
-                <td>@location.PostalCode</td>
-                <td>
-                    <a class="btn btn-secondary" asp-action="EditLocation" asp-route-id="@location.LocationID">Edit</a>
-                </td>
+                <th>Address Line 1</th>
+                <th>Address Line 2</th>
+                <th>City</th>
+                <th>Postal Code</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var location in Model)
+            {
+                <tr>
+                    <td>@location.AddressLine1</td>
+                    <td>@location.AddressLine2</td>
+                    <td>@location.City</td>
+                    <td>@location.PostalCode</td>
+                    @*Number of fridges on this location*@
+                    <td>
+                        <a class="btn btn-secondary" asp-action="EditLocation" asp-route-id="@location.LocationID">Edit Location</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
