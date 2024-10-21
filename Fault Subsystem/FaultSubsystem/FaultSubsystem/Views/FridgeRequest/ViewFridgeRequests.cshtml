@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FaultSubsystem.Models.FridgeRequestModels.ViewUnhandledFridgeRequestsViewModel>
+
+@if (Model.Count() > 0)
+{
+    <div class="mb-4" style="margin: 5px;">
+        <a href="@Url.Action("Dashboard", "InventoryLiaison")" class="btn btn-secondary" style="color: white;">
+            <img src="~/icons/arrow-left-square.svg" alt="Back" />
+        </a>
+    </div>
+
+
+    <div class="title-parent">
+        <h2 class="mb-4 text-center title-header">
+            <strong>Unhandled Fridge Requests</strong>
+        </h2>
+    </div>
+
+    <h2></h2>
+
+    <div class="table-responsive">
+        <table class="view-table table-bordered table-striped table-hover">
+            <thead class="view-table-header">
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Fridge Model</th>
+                    <th>Assign Fridge</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td>@request.CustomerID</td>
+                        <td>@request.FridgeModel</td>
+                        <td>
+                            <a asp-action="AssignFridge" asp-controller="FridgeRequest" asp-route-fridgeRequestId="@request.FridgeRequestID" class="btn btn-primary">Assign Fridge</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div style="text-align: center;">
+        <h2 style="margin: 5px;">No Fridge Requests at the moment</h2>
+        <a href="@Url.Action("Dashboard", "InventoryLiaison")" class="btn btn-info">
+            <img src="~/icons/arrow-left-square.svg" alt="Back" />
+        </a>
+    </div>
+}
+

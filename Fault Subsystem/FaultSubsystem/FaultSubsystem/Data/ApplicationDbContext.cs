@@ -16,6 +16,7 @@ namespace FaultSubsystem.Data
         public DbSet<FaultStatus> FaultStatus { get; set; }
         public DbSet<Fridge> Fridge { get; set; }
         public DbSet<FridgeAllocation> FridgeAllocation { get; set; }
+        public DbSet<FridgeRequest> FridgeRequest { get; set; }
         public DbSet<Inventory> Inventory { get; set; }
         public DbSet<Location> Location { get; set; }
         public DbSet<Role> Role { get; set; }
@@ -106,14 +107,30 @@ namespace FaultSubsystem.Data
                 entity.HasKey(f => f.AllocationID);   // Primary Key
                 // Columns
                 entity.Property(f => f.FridgeID)
-                .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.CustomerID)
-                .HasMaxLength(100)
                 .IsRequired();
                 entity.Property(f => f.AllocationDate)
                 .IsRequired();
                 entity.Property(f => f.ReturnDate);
+            });
+
+            modelBuilder.Entity<FridgeRequest>(entity =>
+            {
+                entity.ToTable("FridgeRequest");         // Table Name
+                entity.HasKey(f => f.FridgeRequestID);   // Primary Key
+                // Columns
+                entity.Property(f => f.CustomerID)
+                .IsRequired();
+                entity.Property(f => f.CustomerID)
+                .IsRequired();
+                entity.Property(f => f.FridgeModel)
+                .HasMaxLength(50)
+                .IsRequired();
+                entity.Property(f => f.AssignFridgeID)
+                .IsRequired();
+                entity.Property(f => f.Handled)
+                .IsRequired();
             });
 
             modelBuilder.Entity<Inventory>(entity =>
@@ -213,28 +230,18 @@ namespace FaultSubsystem.Data
                 .HasOne(f => f.Inventory)
                 .WithMany(i => i.Fridge)
                 .HasForeignKey(f => f.FridgeTypeID);
-            //modelBuilder.Entity<Customer>()
-            //    .HasOne(c => c.User)
-            //    .WithOne(u => u.Customer)
-            //    .HasForeignKey<User>(u => u.UserID);
 
-            //modelBuilder.Entity<Employee>()
-            //    .HasOne(e => e.User)
-            //    .WithOne(u => u.Employee)
-            //    .HasForeignKey<User>(u => u.UserID);
-            //modelBuilder.Entity<Employee>()
-            //    .HasOne(e => e.Role)
-            //    .WithMany(r => r.Employees)
-            //    .HasForeignKey(e => e.RoleID);
+            modelBuilder.Entity<FridgeRequest>()
+                .HasOne(fr => fr.Customer)
+                .WithMany(c => c.FridgeRequest)
+                .HasForeignKey(fr => fr.CustomerID)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Employee>()
-            //    .HasOne(e => e.User)
-            //    .WithOne(u => u.Employee)
-            //    .HasForeignKey<User>(u => u.UserID);
-            //modelBuilder.Entity<Employee>()
-            //    .HasOne(e => e.Role)
-            //    .WithMany(r => r.Employees)
-            //    .HasForeignKey(e => e.RoleID);
+            modelBuilder.Entity<FridgeRequest>()
+                .HasOne(fr => fr.Fridge)
+                .WithMany()                        
+                .HasForeignKey(fr => fr.AssignFridgeID)
+                .OnDelete(DeleteBehavior.SetNull);  
         }
     }
 }

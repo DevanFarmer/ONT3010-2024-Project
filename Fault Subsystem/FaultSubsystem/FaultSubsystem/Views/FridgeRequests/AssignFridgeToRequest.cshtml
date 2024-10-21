@@ -1,0 +1,24 @@
+﻿@model FaultSubsystem.Models.FridgeRequestModels.AssignFridgeViewModel
+
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Assign a Fridge to the Request</h2>
+
+        <form method="post" asp-action="AssignFridgeToRequest" asp-controller="FridgeRequest" class="custom-form">
+            <input type="hidden" asp-for="FridgeRequestID" />
+
+            <div class="form-group">
+                <label for="SelectedFridgeID">Select Fridge</label>
+                <select asp-for="SelectedFridgeID" asp-items="Model.AvailableFridges" class="form-control"></select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Assign Fridge</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

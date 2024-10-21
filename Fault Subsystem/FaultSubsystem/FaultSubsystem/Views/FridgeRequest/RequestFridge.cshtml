@@ -1,0 +1,23 @@
+﻿@model FaultSubsystem.Models.FridgeRequestModels.RequestFridgeViewModel
+
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Request a New Fridge</h2>
+
+        <form method="post" asp-action="RequestFridge" asp-controller="FridgeRequest" class="custom-form">
+            <div class="form-group">
+                <label asp-for="SelectedFridgeModel"><strong>Select Fridge Model:</strong></label>
+                <select asp-for="SelectedFridgeModel" asp-items="Model.AvailableFridgeModels" class="form-control"></select>
+                <span asp-validation-for="SelectedFridgeModel" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Request Fridge</button>
+            <a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

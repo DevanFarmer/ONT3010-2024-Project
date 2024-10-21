@@ -7,5 +7,6 @@
 
         public User User { get; set; }
         public ICollection<FridgeAllocation> FridgeAllocation { get; set; }
+        public ICollection<FridgeRequest> FridgeRequest { get; set; }
     }
 }

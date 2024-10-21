@@ -27,7 +27,8 @@ namespace FaultSubsystem.Controllers
             var tiles = new List<TileModel>
             {
                 new TileModel {Title = "View Fridges", Description = "View your fridges.", Action = "ViewFridges", Controller = "Customer"},
-                new TileModel {Title = "View Faulty Fridges", Description = "View the status of your faulty fridges.", Action = "ViewFaultyFridges", Controller = "Customer"}
+                new TileModel {Title = "View Faulty Fridges", Description = "View the status of your faulty fridges.", Action = "ViewFaultyFridges", Controller = "Customer"},
+                new TileModel {Title = "Request Fridge", Description = "Request a new Fridge.", Action = "RequestFridge", Controller = "FridgeRequest"}
             };
 
             TempData["TilesList"] = JsonConvert.SerializeObject(tiles);
