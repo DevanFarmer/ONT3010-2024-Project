@@ -3,6 +3,7 @@ using FaultSubsystem.Models;
 using FaultSubsystem.Models.CustomerModels;
 using FaultSubsystem.Models.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -45,12 +46,14 @@ namespace FaultSubsystem.Controllers
 
         public async Task<IActionResult> ViewCustomerFridges(int customerID)
         {
-            // Dont show faulty fridges
             //var allocatedFridges = await (from allocation in _dBContext.FridgeAllocation
             //                              join fridge in _dBContext.Fridge on allocation.FridgeID equals fridge.FridgeID
             //                              join inventory in _dBContext.Inventory on fridge.FridgeTypeID equals inventory.FridgeTypeID
             //                              join location in _dBContext.Location on fridge.LocationID equals location.LocationID
+            //                              join faultReport in _dBContext.FaultReport on allocation.AllocationID equals faultReport.AllocationID into faultGroup
+            //                              from fg in faultGroup.DefaultIfEmpty()  // To include fridges even if there are no faults
             //                              where allocation.CustomerID == customerID
+            //                              && (fg == null || fg.FaultStatus.StatusName == "Resolved")  // Exclude unresolved faults
             //                              select new AllocatedFridgesViewModel
             //                              {
             //                                  FridgeID = fridge.FridgeID,
@@ -68,10 +71,9 @@ namespace FaultSubsystem.Controllers
                                           join fridge in _dBContext.Fridge on allocation.FridgeID equals fridge.FridgeID
                                           join inventory in _dBContext.Inventory on fridge.FridgeTypeID equals inventory.FridgeTypeID
                                           join location in _dBContext.Location on fridge.LocationID equals location.LocationID
-                                          join faultReport in _dBContext.FaultReport on allocation.AllocationID equals faultReport.AllocationID into faultGroup
-                                          from fg in faultGroup.DefaultIfEmpty()  // To include fridges even if there are no faults
+                                          join fridgeStatus in _dBContext.Status on fridge.StatusID equals fridgeStatus.FridgeStatusID
                                           where allocation.CustomerID == customerID
-                                          && (fg == null || fg.FaultStatus.StatusName == "Resolved")  // Exclude unresolved faults
+                                          && fridgeStatus.StatusName == "Allocated"
                                           select new AllocatedFridgesViewModel
                                           {
                                               FridgeID = fridge.FridgeID,
@@ -146,12 +148,28 @@ namespace FaultSubsystem.Controllers
                 };
 
                 _dBContext.FaultReport.Add(faultReport);
+
+                // Update FridgeStatusID to "Faulty"
+                var fridgeAllocation = await _dBContext.FridgeAllocation
+                    .Include(fa => fa.Fridge) // Include fridge data
+                    .FirstOrDefaultAsync(fa => fa.AllocationID == model.AllocationID);
+
+                if (fridgeAllocation != null)
+                {
+                    fridgeAllocation.Fridge.StatusID = 3; // Update FridgeStatusID to "Faulty"
+                }
+                else
+                {
+                    ModelState.AddModelError("FaultDescription", "Could not find fridge. Please try again later.");
+                    return View(model);
+                }
+
                 await _dBContext.SaveChangesAsync();
 
                 return RedirectToAction(nameof(ViewFridges), "Customer");
             }
 
-            return View(model); // Error messages
+            return View(model);
         }
 
         public async Task<IActionResult> ViewFaultyFridges()
@@ -164,24 +182,42 @@ namespace FaultSubsystem.Controllers
                 return NotFound();
             }
 
+            //var faultReports = await _dBContext.FridgeAllocation
+            //    .Include(fa => fa.Fridge)                          // Include Fridge
+            //        .ThenInclude(f => f.Inventory)                 // Include Inventory for FridgeModel
+            //    .Include(fa => fa.FaultReport)                     // Include FaultReports
+            //        .ThenInclude(fr => fr.FaultStatus)             // Include FaultStatus for each report
+            //    .Where(fa => fa.CustomerID == customer.CustomerID) // Filter by the logged-in customer
+            //    .SelectMany(fa => fa.FaultReport
+            //        .Where(fr => fr.FaultStatus.StatusName != "Resolved") // Filter out resolved faults
+            //        .Select(fr => new FaultyFridgesViewModel
+            //        {
+            //            FridgeID = fa.FridgeID,
+            //            FridgeModel = fa.Fridge.Inventory.FridgeModel,
+            //            SerialNumber = fa.Fridge.SerialNumber,
+            //            FaultID = fr.FaultID,
+            //            FaultDescription = fr.FaultDescription,
+            //            FaultStatus = fr.FaultStatus.StatusName,
+            //            ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
+            //        }))
+            //    .ToListAsync();
+
+            //return View(faultReports);
             var faultReports = await _dBContext.FridgeAllocation
                 .Include(fa => fa.Fridge)                          // Include Fridge
                     .ThenInclude(f => f.Inventory)                 // Include Inventory for FridgeModel
-                .Include(fa => fa.FaultReport)                     // Include FaultReports
-                    .ThenInclude(fr => fr.FaultStatus)             // Include FaultStatus for each report
-                .Where(fa => fa.CustomerID == customer.CustomerID) // Filter by the logged-in customer
-                .SelectMany(fa => fa.FaultReport
-                    .Where(fr => fr.FaultStatus.StatusName != "Resolved") // Filter out resolved faults
-                    .Select(fr => new FaultyFridgesViewModel
-                    {
-                        FridgeID = fa.FridgeID,
-                        FridgeModel = fa.Fridge.Inventory.FridgeModel,
-                        SerialNumber = fa.Fridge.SerialNumber,
-                        FaultID = fr.FaultID,
-                        FaultDescription = fr.FaultDescription,
-                        FaultStatus = fr.FaultStatus.StatusName,
-                        ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
-                    }))
+                .Where(fa => fa.CustomerID == customer.CustomerID)  // Filter by the logged-in customer
+                .Where(fa => fa.Fridge.StatusID == 3)               // Filter by Fridge status (Faulty)
+                .Select(fa => new FaultyFridgesViewModel
+                {
+                    FridgeID = fa.FridgeID,
+                    FridgeModel = fa.Fridge.Inventory.FridgeModel,
+                    SerialNumber = fa.Fridge.SerialNumber,
+                    FaultID = fa.FaultReport.Select(fr => fr.FaultID).FirstOrDefault(),  // Get FaultID from FaultReport
+                    FaultDescription = fa.FaultReport.Select(fr => fr.FaultDescription).FirstOrDefault() ?? "N/A",
+                    FaultStatus = fa.FaultReport.Select(fr => fr.FaultStatus.StatusName).FirstOrDefault() ?? "N/A",
+                    ReturnDate = fa.ReturnDate.HasValue ? fa.ReturnDate.Value.ToShortDateString() : "N/A"
+                })
                 .ToListAsync();
 
             return View(faultReports);

@@ -250,7 +250,7 @@ namespace FaultSubsystem.Controllers
             {
                 CustomerID = customerId,
                 AvailableFridges = _dBContext.Fridge
-                    .Where(f => !f.FridgeAllocation.Any(fa => fa.ReturnDate == null))
+                    .Where(f => f.StatusID == 1) // Only show Available fridgse
                     .Select(f => new SelectListItem
                     {
                         Value = f.FridgeID.ToString(),
@@ -267,19 +267,56 @@ namespace FaultSubsystem.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFridgeAllocation(AddFridgeAllocationViewModel model)
         {
+            if (model?.CustomerID == null || model?.CustomerID < 1)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
+                // Increment ID, when deleting is enabled you go through all ids and count, if no id of that exist that is the new id
+                var maxAllocations = await _dBContext.FridgeAllocation.MaxAsync(fa => (int?)fa.AllocationID) ?? 0;
+
+                var newAllocationID = maxAllocations + 1;
+
                 var allocation = new FridgeAllocation
                 {
+                    AllocationID = newAllocationID,
                     FridgeID = model.SelectedFridgeID,
                     CustomerID = model.CustomerID,
                     AllocationDate = DateTime.Now
                 };
 
                 _dBContext.FridgeAllocation.Add(allocation);
+
+                // Update the Fridge StatusID to 'Allocated' (2)
+                var fridge = await _dBContext.Fridge
+                    .FirstOrDefaultAsync(f => f.FridgeID == model.SelectedFridgeID);
+
+                if (fridge != null)
+                {
+                    fridge.StatusID = 2; // Set the status to 'Allocated' (2)
+                    _dBContext.Fridge.Update(fridge); // Mark the fridge as modified
+                }
+                else
+                {
+                    return View(model);
+                }
+
                 await _dBContext.SaveChangesAsync();
 
                 return RedirectToAction("ViewCustomerAllocations", new { customerId = model.CustomerID });
+            }
+
+            // Loop through the ModelState errors
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                foreach (var error in state.Errors)
+                {
+                    // Log the error message
+                    Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                }
             }
 
             return View(model);

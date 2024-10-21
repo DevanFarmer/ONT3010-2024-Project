@@ -126,40 +126,41 @@ namespace FaultSubsystem.Controllers
         [HttpPost]
         public async Task<IActionResult> EditFaultReport(EditFaultReportModel model)
         {
-            var faultReport = await _dBContext.FaultReport.FindAsync(model.FaultID);
-
-            if (faultReport == null)
-            {
-                return NotFound();
-            }
-
-            // Update the fault report with the new diagnosis and status
             if (ModelState.IsValid)
             {
-                faultReport.Diagnosis = model.Diagnosis ?? "";
-                faultReport.FaultStatusID = model.FaultStatusID;
-                faultReport.ScheduledRepairDate = model.ScheduledRepairDate;
-                faultReport.Notes = model.Notes ?? "";
+                // Retrieve the fault report based on the FaultID
+                var faultReport = await _dBContext.FaultReport
+                    .Include(fr => fr.FridgeAllocation)
+                        .ThenInclude(fa => fa.Fridge) // Include the fridge
+                    .FirstOrDefaultAsync(fr => fr.FaultID == model.FaultID);
 
-                await _dBContext.SaveChangesAsync();
-
-                return RedirectToAction(nameof(ViewAssignedFaultReports)); // Redirect back to the list after saving
-            }
-
-            // Loop through the ModelState errors
-            foreach (var key in ModelState.Keys)
-            {
-                var state = ModelState[key];
-                foreach (var error in state.Errors)
+                if (faultReport != null)
                 {
-                    // Log or display the error message
-                    Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                    // Update the fault report details
+                    faultReport.FaultStatusID = model.FaultStatusID;
+                    faultReport.Notes = model.Notes;
+                    faultReport.Diagnosis = model.Diagnosis;
+
+                    // Check the fault status and update the fridge status
+                    if (model.FaultStatusID == 3) // "Resolved"
+                    {
+                        faultReport.FridgeAllocation.Fridge.StatusID = 2; // "Allocated"
+                    }
+                    else if (model.FaultStatusID == 4) // "Should scrap"
+                    {
+                        faultReport.FridgeAllocation.Fridge.StatusID = 4; // "Scrapped"
+                    }
+
+                    // Save changes to the database
+                    await _dBContext.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(ViewAssignedFaultReports));
                 }
+
+                return NotFound(); // Fault report not found
             }
 
-            model.AvailableStatuses = await _dBContext.FaultStatus.ToListAsync();
-
-            return View(model);
+            return View(model); // If model state is invalid, return to the same view
         }
 
         public async Task<IActionResult> ViewFaultReportsHistory()

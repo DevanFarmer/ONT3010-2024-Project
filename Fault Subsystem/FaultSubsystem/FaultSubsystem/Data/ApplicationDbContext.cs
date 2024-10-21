@@ -159,8 +159,8 @@ namespace FaultSubsystem.Data
 
             modelBuilder.Entity<Status>(entity =>
             {
-                entity.ToTable("Status");         // Table Name
-                entity.HasKey(s => s.StatusID);   // Primary Key
+                entity.ToTable("FridgeStatus");         // Table Name
+                entity.HasKey(s => s.FridgeStatusID);   // Primary Key
                 // Columns
                 entity.Property(s => s.StatusName)
                 .HasMaxLength(100)

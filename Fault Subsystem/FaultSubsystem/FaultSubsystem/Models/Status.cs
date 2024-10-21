@@ -2,7 +2,7 @@
 {
     public class Status
     {
-        public int StatusID { get; set; }
+        public int FridgeStatusID { get; set; }
         public string StatusName { get; set; }
     }
 }

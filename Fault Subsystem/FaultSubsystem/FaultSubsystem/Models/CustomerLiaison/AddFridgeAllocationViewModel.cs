@@ -9,6 +9,6 @@ namespace FaultSubsystem.Models.CustomerLiaison
         [Required(ErrorMessage = "Please select a fridge.")]
         public int SelectedFridgeID { get; set; }
 
-        public List<SelectListItem> AvailableFridges { get; set; }
+        public List<SelectListItem>? AvailableFridges { get; set; }
     }
 }

@@ -32,7 +32,12 @@
 
             <div class="form-group">
                 <label asp-for="Password">Password: </label>
-                <input asp-for="Password" type="password" class="form-control" />
+                <div class="password-field">
+                    <input asp-for="Password" type="password" id="Password" class="form-control" />
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <img src="~/icons/eye.svg" alt="Back" />
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
@@ -49,6 +54,19 @@
 
 </div>
 
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        var passwordField = document.getElementById('Password');
+        var fieldType = passwordField.type;
+
+        // Toggle the type between 'password' and 'text'
+        if (fieldType === 'password') {
+            passwordField.type = 'text';
+        } else {
+            passwordField.type = 'password';
+        }
+    });
+</script>
 
 @section Scripts {
     @{

@@ -1,0 +1,35 @@
+﻿@model FaultSubsystem.Models.InventoryLiaison.AddFridgeViewModel
+
+
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Add New Fridge</h2>
+
+        <form asp-action="AddFridge" method="post" class="custom-form">
+            <div class="form-group">
+                <label for="FridgeTypeID"><strong>Fridge Model:</strong></label>
+                <select asp-for="FridgeTypeID" asp-items="Model.AvailableFridgeModels" class="form-control"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="SerialNumber"><strong>Serial Number:</strong></label>
+                <input asp-for="SerialNumber" class="form-control" />
+                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="LocationID"><strong>Location:</strong></label>
+                <select asp-for="LocationID" asp-items="Model.AvailableLocations" class="form-control"></select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Fridge</button>
+            <a href="@Url.Action("ViewFridges")" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

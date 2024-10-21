@@ -5,11 +5,7 @@
         <h2>Allocate a Fridge</h2>
 
         <form asp-action="AddFridgeAllocation" method="post" class="custom-form">
-            <div class="form-group">
-                <label asp-for="CustomerID">Customer ID</label>
-                <input type="text" id="Customer" class="form-control" value="@Model.CustomerID" readonly />
-                <span asp-validation-for="CustomerID" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="CustomerID" />
 
             <div class="form-group">
                 <label asp-for="SelectedFridgeID">Select a Fridge</label>

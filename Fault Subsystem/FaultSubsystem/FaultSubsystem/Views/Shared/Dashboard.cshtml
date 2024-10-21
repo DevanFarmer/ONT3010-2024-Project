@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <style>
+@*     <style>
         .tile-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr); /* Two tiles per row */
@@ -43,6 +43,77 @@
             font-size: 0.9em;
             text-align: left;
             color: #555;
+        }
+    </style> *@
+    <style>
+        /* Container for the tiles */
+        .tile-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two tiles per row */
+            grid-column-gap: 5px;
+            grid-row-gap: 20px; /* Increased space between tiles */
+            justify-items: center; /* Center the tiles horizontally */
+            padding: 20px; /* Padding around the grid */
+        }
+
+        /* Link styles for each tile */
+        .tile-link {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit text color */
+        }
+
+        /* Style for the tile itself */
+        .tile {
+            width: 250px; /* Larger tile size */
+            height: 250px; /* Adjust height to match width */
+            border-radius: 20px; /* More rounded corners */
+            background-color: #f0f4f8; /* Soft, light background */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Larger, softer shadow */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space out title and description */
+            align-items: flex-start;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transitions */
+        }
+
+            /* Tile hover effect */
+            .tile:hover {
+                transform: translateY(-5px); /* Slight lift on hover */
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Darker, more intense shadow */
+            }
+
+        /* Title style inside the tile */
+        .tile-title {
+            margin: 0;
+            font-size: 1.4em; /* Larger title font */
+            font-weight: 600; /* Slightly bolder font */
+            text-align: left;
+            color: dodgerblue; /* Darker text for contrast */
+        }
+
+        /* Description text style */
+        .tile-description {
+            margin-top: 10px;
+            font-size: 1em; /* Larger description text */
+            text-align: left;
+            color: #666; /* Subtle gray color for description */
+        }
+
+        /* Add some gradient background variations for each tile */
+        .tile:nth-child(odd) {
+            background-color: #e0f7fa; /* Light cyan for odd tiles */
+        }
+
+        .tile:nth-child(even) {
+            background-color: #fff3e0; /* Light orange for even tiles */
+        }
+
+        /* Optional: Add some icons or images on top of the tiles (if needed) */
+        .tile-icon {
+            font-size: 40px; /* Larger icon */
+            margin-bottom: 15px; /* Space between icon and title */
+            color: #00796b; /* Icon color */
         }
     </style>
 </head>

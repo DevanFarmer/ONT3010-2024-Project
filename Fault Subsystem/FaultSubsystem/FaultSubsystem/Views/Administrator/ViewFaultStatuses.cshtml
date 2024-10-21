@@ -1,0 +1,37 @@
+﻿@model IEnumerable<FaultStatus>
+
+<div class="mb-4" style="margin: 5px;">
+    <a href="@Url.Action("Dashboard", "Administrator")" class="btn btn-secondary" style="color: white;">
+        <img src="~/icons/arrow-left-square.svg" alt="Back" />
+    </a>
+</div>
+
+<div class="title-parent">
+    <h2 class="mb-4 text-center title-header">
+        <strong>Fault Statuses</strong>
+    </h2>
+</div>
+
+<button type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("AddFaultStatus", "Administrator")'" style="margin: 5px;">Create New Fault Status</button>
+
+<div class="table-responsive">
+    <table class="view-table table-bordered table-striped table-hover">
+        <thead class="view-table-header">
+            <tr>
+                <th>Status Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var status in Model)
+            {
+                <tr>
+                    <td>@status.StatusName</td>
+                    <td>
+                        <a href="@Url.Action("EditFaultStatus", new { id = status.FaultStatusID })" class="btn btn-warning">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,27 @@
+﻿@model FaultSubsystem.Models.InventoryLiaison.FridgeStatusViewModel
+
+<div class="form-parent">
+    <div class="form-container">
+        <h2>Edit Fridge Status</h2>
+
+        <form asp-action="EditFridgeStatus" method="post" class="custom-form">
+            <input type="hidden" asp-for="FridgeStatusID" />
+            
+            <div class="form-group">
+                <label for="StatusName"><strong>Status Name:</strong></label>
+                <input asp-for="StatusName" class="form-control" />
+                <span asp-validation-for="StatusName" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="@Url.Action("ViewFridgeStatuses")" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
